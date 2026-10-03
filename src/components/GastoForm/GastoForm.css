@@ -4,9 +4,20 @@
   gap: 14px 16px;
   align-items: end;
 }
+.gasto-form--quatro {
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+}
+.gasto-form__previa,
 .gasto-form__erro,
 .gasto-form__acoes {
   grid-column: 1 / -1;
+}
+.gasto-form__previa {
+  padding: 10px 14px;
+  border-radius: var(--raio-campo);
+  background: var(--verde-claro);
+  color: var(--verde-escuro);
+  font-size: 14px;
 }
 .gasto-form__acoes {
   display: flex;
@@ -14,8 +25,9 @@
   gap: 10px;
 }
 
-@media (max-width: 720px) {
-  .gasto-form {
+@media (max-width: 800px) {
+  .gasto-form,
+  .gasto-form--quatro {
     grid-template-columns: 1fr 1fr;
   }
   .gasto-form__nome {
@@ -26,7 +38,8 @@
   }
 }
 @media (max-width: 420px) {
-  .gasto-form {
+  .gasto-form,
+  .gasto-form--quatro {
     grid-template-columns: 1fr;
   }
 }

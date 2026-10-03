@@ -5,16 +5,49 @@ import PageHeader from '../../components/PageHeader/PageHeader';
 import StatCard from '../../components/StatCard/StatCard';
 import StatusBadge from '../../components/StatusBadge/StatusBadge';
 import EmptyState from '../../components/EmptyState/EmptyState';
+import ListaGastos from '../../components/ListaGastos/ListaGastos';
 import Modal from '../../components/Modal/Modal';
 import { useToast } from '../../components/Toast/Toast';
 import { useMes } from '../../contexts/MesContext';
 import { useGastos, useProximosPagamentos } from '../../hooks/useGastos';
 import { useEntradas } from '../../hooks/useEntradas';
 import * as entradasService from '../../services/entradasService';
-import { dataCurta, dataPadrao, moeda, parseValor, statusDoGasto, textoPrazo } from '../../lib/format';
+import {
+  dataCurta,
+  dataPadrao,
+  moeda,
+  parseValor,
+  rotuloTipo,
+  statusDoGasto,
+  textoPrazo,
+} from '../../lib/format';
 import './Geral.css';
 
 const soma = (lista) => lista.reduce((total, item) => total + Number(item.valor), 0);
+
+const TIPOS = [
+  {
+    id: 'fixo',
+    titulo: 'Gastos fixos',
+    descricao: 'Repetem todo mês',
+    vazio: 'Nenhum gasto fixo neste mês',
+    vazioDescricao: 'Cadastre em Cadastro de gastos → Gastos fixos.',
+  },
+  {
+    id: 'variavel',
+    titulo: 'Gastos variáveis',
+    descricao: 'Valem só para este mês',
+    vazio: 'Nenhum gasto variável neste mês',
+    vazioDescricao: 'Cadastre em Cadastro de gastos → Gastos variáveis.',
+  },
+  {
+    id: 'parcelado',
+    titulo: 'Compras parceladas',
+    descricao: 'Parcelas que vencem neste mês',
+    vazio: 'Nenhuma parcela neste mês',
+    vazioDescricao: 'Cadastre em Cadastro de gastos → Compras parceladas.',
+  },
+];
 
 export default function Geral() {
   const { mes } = useMes();
@@ -30,20 +63,29 @@ export default function Geral() {
   const [erroForm, setErroForm] = useState('');
   const [salvando, setSalvando] = useState(false);
 
-  const resumo = useMemo(() => {
-    const pagos = gastos.filter((g) => g.pago);
+  const { categorias, resumo } = useMemo(() => {
     const abertos = gastos.filter((g) => !g.pago);
+    const pagos = gastos.filter((g) => g.pago);
     const entrou = soma(entradas);
-    const totalGastos = soma(gastos);
+
     return {
-      entrou,
-      pago: soma(pagos),
-      divida: soma(abertos),
-      qtdAbertos: abertos.length,
-      qtdAtrasados: abertos.filter((g) => statusDoGasto(g) === 'atrasado').length,
-      saldo: entrou - totalGastos,
-      percentual: gastos.length ? Math.round((pagos.length / gastos.length) * 100) : 0,
-      qtdPagos: pagos.length,
+      categorias: TIPOS.map((tipo) => {
+        const lista = gastos.filter((g) => g.tipo === tipo.id);
+        const pago = soma(lista.filter((g) => g.pago));
+        const total = soma(lista);
+        return { ...tipo, lista, total, pago, aPagar: total - pago };
+      }),
+      resumo: {
+        entrou,
+        total: soma(gastos),
+        pago: soma(pagos),
+        divida: soma(abertos),
+        qtdAbertos: abertos.length,
+        qtdAtrasados: abertos.filter((g) => statusDoGasto(g) === 'atrasado').length,
+        saldo: entrou - soma(gastos),
+        percentual: gastos.length ? Math.round((pagos.length / gastos.length) * 100) : 0,
+        qtdPagos: pagos.length,
+      },
     };
   }, [gastos, entradas]);
 
@@ -94,9 +136,13 @@ export default function Geral() {
     }
   }
 
+  const fixos = categorias[0];
+  const variaveis = categorias[1];
+  const parcelados = categorias[2];
+
   return (
     <div className="geral">
-      <PageHeader titulo="Geral" descricao="Como está o seu mês, em resumo." />
+      <PageHeader titulo="Geral" descricao="Tudo do seu mês, em detalhe." />
 
       {erro && <p className="aviso-erro geral__erro">Não foi possível carregar os dados: {erro}</p>}
 
@@ -154,6 +200,44 @@ export default function Geral() {
       </section>
 
       <div className="geral__colunas">
+        <section className="painel geral__resumo">
+          <h2>Resumo do mês</h2>
+          <div className="geral__tabela-rolagem">
+            <table className="geral__tabela">
+              <thead>
+                <tr>
+                  <th scope="col">Categoria</th>
+                  <th scope="col">Total</th>
+                  <th scope="col">Pago</th>
+                  <th scope="col">A pagar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categorias.map((c) => (
+                  <tr key={c.id}>
+                    <th scope="row">{c.titulo}</th>
+                    <td className="numero">{moeda(c.total)}</td>
+                    <td className="numero">{moeda(c.pago)}</td>
+                    <td className="numero">{moeda(c.aPagar)}</td>
+                  </tr>
+                ))}
+                <tr className="geral__tabela-total">
+                  <th scope="row">Total de contas</th>
+                  <td className="numero">{moeda(resumo.total)}</td>
+                  <td className="numero">{moeda(resumo.pago)}</td>
+                  <td className="numero">{moeda(resumo.divida)}</td>
+                </tr>
+                <tr className="geral__tabela-entrada">
+                  <th scope="row">Valores adicionados</th>
+                  <td className="numero">{moeda(resumo.entrou)}</td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
         <section className="painel geral__lista">
           <header className="geral__lista-topo">
             <h2>Próximos pagamentos</h2>
@@ -170,7 +254,7 @@ export default function Geral() {
                   <div className="geral__item-info">
                     <strong>{g.nome}</strong>
                     <small>
-                      {dataCurta(g.data_pagamento)} · {textoPrazo(g.data_pagamento)}
+                      {rotuloTipo(g)} · {dataCurta(g.data_pagamento)} · {textoPrazo(g.data_pagamento)}
                     </small>
                   </div>
                   <StatusBadge status={statusDoGasto(g)} />
@@ -180,10 +264,43 @@ export default function Geral() {
             </ul>
           )}
         </section>
+      </div>
+
+      <div className="geral__colunas">
+        <ListaGastos
+          titulo={fixos.titulo}
+          descricao={fixos.descricao}
+          gastos={fixos.lista}
+          vazio={fixos.vazio}
+          vazioDescricao={fixos.vazioDescricao}
+          ocupado={carregandoGastos}
+        />
+        <ListaGastos
+          titulo={variaveis.titulo}
+          descricao={variaveis.descricao}
+          gastos={variaveis.lista}
+          vazio={variaveis.vazio}
+          vazioDescricao={variaveis.vazioDescricao}
+          ocupado={carregandoGastos}
+        />
+      </div>
+
+      <div className="geral__colunas">
+        <ListaGastos
+          titulo={parcelados.titulo}
+          descricao={parcelados.descricao}
+          gastos={parcelados.lista}
+          vazio={parcelados.vazio}
+          vazioDescricao={parcelados.vazioDescricao}
+          ocupado={carregandoGastos}
+        />
 
         <section className="painel geral__lista">
           <header className="geral__lista-topo">
-            <h2>Entradas do mês</h2>
+            <div>
+              <h2>Valores adicionados</h2>
+              <p className="geral__sub">Dinheiro que entrou em {entradas.length === 1 ? '1 lançamento' : `${entradas.length} lançamentos`}</p>
+            </div>
             <button type="button" className="btn btn--secundario btn--pequeno" onClick={abrirModal}>
               <Plus size={16} aria-hidden="true" />
               Registrar entrada
@@ -204,7 +321,7 @@ export default function Geral() {
                 <li key={e.id} className="geral__item">
                   <div className="geral__item-info">
                     <strong>{e.descricao}</strong>
-                    <small>{dataCurta(e.data_entrada)}</small>
+                    <small>Recebido em {dataCurta(e.data_entrada)}</small>
                   </div>
                   <span className="numero geral__item-valor geral__item-valor--entrada">
                     {moeda(e.valor)}

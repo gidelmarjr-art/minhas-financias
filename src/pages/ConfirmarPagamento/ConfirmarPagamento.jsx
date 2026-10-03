@@ -8,7 +8,7 @@ import { useToast } from '../../components/Toast/Toast';
 import { useMes } from '../../contexts/MesContext';
 import { useGastos } from '../../hooks/useGastos';
 import * as gastosService from '../../services/gastosService';
-import { dataCurta, moeda, statusDoGasto, textoPrazo } from '../../lib/format';
+import { dataCurta, moeda, rotuloTipo, statusDoGasto, textoPrazo } from '../../lib/format';
 import './ConfirmarPagamento.css';
 
 export default function ConfirmarPagamento() {
@@ -110,11 +110,11 @@ export default function ConfirmarPagamento() {
                 <strong>{g.nome}</strong>
                 {g.pago ? (
                   <small>
-                    Pago em {dataCurta(g.data_pago)} · {g.banco}
+                    {rotuloTipo(g)} · Pago em {dataCurta(g.data_pago)} · {g.banco}
                   </small>
                 ) : (
                   <small>
-                    {dataCurta(g.data_pagamento)} · {textoPrazo(g.data_pagamento)}
+                    {rotuloTipo(g)} · {dataCurta(g.data_pagamento)} · {textoPrazo(g.data_pagamento)}
                   </small>
                 )}
               </div>

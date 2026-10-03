@@ -86,3 +86,23 @@ export function parseValor(texto) {
   const numero = Number(normal);
   return Number.isFinite(numero) ? numero : NaN;
 }
+
+/** Data "AAAA-MM-DD" de um dia dentro de um mês "AAAA-MM" (ajusta dia 31 em meses curtos). */
+export function dataDoMes(mes, dia) {
+  const [ano, m] = mes.split('-').map(Number);
+  const ultimo = new Date(ano, m, 0).getDate();
+  return `${mes}-${String(Math.min(Number(dia), ultimo)).padStart(2, '0')}`;
+}
+
+/** Soma meses a uma data ISO mantendo o dia (ajustado ao fim do mês quando preciso). */
+export function dataMaisMeses(iso, n) {
+  const [ano, m, dia] = iso.split('-').map(Number);
+  const mes = deslocarMes(`${ano}-${String(m).padStart(2, '0')}`, n);
+  return dataDoMes(mes, dia);
+}
+
+export function rotuloTipo(gasto) {
+  if (gasto.tipo === 'fixo') return 'Fixo';
+  if (gasto.tipo === 'parcelado') return `Parcela ${gasto.parcela_numero}/${gasto.parcela_total}`;
+  return 'Variável';
+}

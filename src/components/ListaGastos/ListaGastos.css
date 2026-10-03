@@ -1,0 +1,109 @@
+.lista-gastos {
+  padding: 20px;
+}
+.lista-gastos__topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.lista-gastos__topo h2 {
+  font-size: 18px;
+}
+.lista-gastos__topo p {
+  color: var(--tinta-suave);
+  font-size: 13.5px;
+}
+.lista-gastos__totais {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+.lista-gastos__totais strong {
+  font-size: 20px;
+}
+.lista-gastos__totais small {
+  color: var(--tinta-suave);
+  font-size: 12.5px;
+}
+
+.lista-gastos__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px;
+  border-top: 1px solid var(--linha);
+  border-radius: 8px;
+}
+.lista-gastos__item:first-child {
+  border-top: 0;
+}
+.lista-gastos__item--ativo {
+  background: var(--verde-claro);
+}
+.lista-gastos__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.lista-gastos__nome {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.lista-gastos__nome strong {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lista-gastos__tag {
+  flex-shrink: 0;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--papel);
+  color: var(--tinta-suave);
+  font-size: 12px;
+  font-weight: 600;
+}
+.lista-gastos__info small {
+  color: var(--tinta-suave);
+}
+.lista-gastos__valor {
+  min-width: 96px;
+  font-weight: 700;
+  text-align: right;
+}
+.lista-gastos__acoes {
+  display: flex;
+  gap: 6px;
+}
+
+@media (max-width: 640px) {
+  .lista-gastos {
+    padding: 16px;
+  }
+  .lista-gastos__topo {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .lista-gastos__totais {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .lista-gastos__item {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+  .lista-gastos__info {
+    flex-basis: 100%;
+  }
+  .lista-gastos__valor {
+    min-width: 0;
+    margin-left: auto;
+  }
+}
