@@ -26,7 +26,16 @@ export function AuthProvider({ children }) {
       carregando,
       entrar: async (email, senha) => {
         const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
-        if (error) throw new Error('E-mail ou senha incorretos.');
+        if (error) {
+          console.error('Erro de login:', error);
+          if (error.message === 'Email not confirmed') {
+            throw new Error('E-mail ainda não confirmado. Confirme o usuário no painel do Supabase.');
+          }
+          if (error.message === 'Invalid login credentials') {
+            throw new Error('E-mail ou senha incorretos.');
+          }
+          throw new Error(error.message);
+        }
       },
       sair: () => supabase.auth.signOut(),
     }),
