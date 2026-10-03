@@ -1,0 +1,128 @@
+.geral__erro {
+  margin-bottom: 16px;
+}
+
+.geral__cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.geral__progresso {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 18px 20px;
+}
+.geral__progresso-texto {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.geral__progresso-texto .numero {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--verde);
+}
+.geral__barra {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--papel);
+}
+.geral__barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--verde);
+  transition: width 0.4s ease;
+}
+
+.geral__colunas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+.geral__lista {
+  padding: 20px;
+}
+.geral__lista-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.geral__lista-topo h2 {
+  font-size: 18px;
+}
+.geral__link {
+  color: var(--verde);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.geral__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--linha);
+}
+.geral__item:first-child {
+  border-top: 0;
+}
+.geral__item-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.geral__item-info strong {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.geral__item-info small {
+  color: var(--tinta-suave);
+}
+.geral__item-valor {
+  min-width: 96px;
+  font-weight: 700;
+  text-align: right;
+}
+.geral__item-valor--entrada {
+  color: var(--verde);
+}
+
+.geral__form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (max-width: 1100px) {
+  .geral__cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 800px) {
+  .geral__colunas {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 480px) {
+  .geral__cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .geral__item {
+    flex-wrap: wrap;
+  }
+  .geral__item-valor {
+    min-width: 0;
+  }
+}

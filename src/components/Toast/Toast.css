@@ -1,0 +1,37 @@
+.toast__area {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 60;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+.toast {
+  max-width: 340px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: var(--tinta);
+  color: #fff;
+  font-weight: 500;
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.4);
+  animation: toast-entrada 0.2s ease-out;
+}
+.toast--erro {
+  background: var(--vermelho);
+}
+
+@keyframes toast-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (max-width: 900px) {
+  .toast__area {
+    right: 12px;
+    bottom: 88px;
+    left: 12px;
+  }
+}

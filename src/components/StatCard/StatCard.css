@@ -1,0 +1,57 @@
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 20px;
+  border: 1px solid var(--linha);
+  border-radius: var(--raio-painel);
+  background: var(--superficie);
+  box-shadow: var(--sombra);
+}
+.stat-card__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.stat-card__rotulo {
+  color: var(--tinta-suave);
+  font-size: 14px;
+  font-weight: 500;
+}
+.stat-card__icone {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--papel);
+  color: var(--tinta-suave);
+}
+.stat-card__valor {
+  font-size: clamp(22px, 2.6vw, 28px);
+  line-height: 1.15;
+}
+.stat-card__detalhe {
+  color: var(--tinta-suave);
+  font-size: 13px;
+}
+
+.stat-card--positivo .stat-card__icone {
+  background: var(--verde-claro);
+  color: var(--verde);
+}
+.stat-card--positivo .stat-card__valor {
+  color: var(--verde);
+}
+.stat-card--alerta .stat-card__icone {
+  background: var(--ambar-claro);
+  color: var(--ambar);
+}
+.stat-card--perigo .stat-card__icone {
+  background: var(--vermelho-claro);
+  color: var(--vermelho);
+}
+.stat-card--perigo .stat-card__valor {
+  color: var(--vermelho);
+}

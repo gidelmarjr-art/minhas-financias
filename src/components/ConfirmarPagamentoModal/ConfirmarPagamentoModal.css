@@ -1,0 +1,35 @@
+.confirmar-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.confirmar-modal__resumo {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--papel);
+}
+.confirmar-modal__resumo .numero {
+  font-size: 20px;
+  font-weight: 700;
+}
+.confirmar-modal__resumo small {
+  grid-column: 1 / -1;
+  color: var(--tinta-suave);
+}
+.confirmar-modal__acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+.confirmar-modal__acoes .btn {
+  flex: 1;
+}
+@media (min-width: 601px) {
+  .confirmar-modal__acoes .btn {
+    flex: 0 0 auto;
+  }
+}

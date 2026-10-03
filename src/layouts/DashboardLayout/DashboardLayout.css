@@ -1,0 +1,17 @@
+.dashboard-layout__conteudo {
+  min-height: 100%;
+  margin-left: 260px;
+  padding: 32px clamp(20px, 3.5vw, 48px) 48px;
+}
+.dashboard-layout__conteudo > * {
+  max-width: 1120px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (max-width: 900px) {
+  .dashboard-layout__conteudo {
+    margin-left: 0;
+    padding: 20px 16px 104px;
+  }
+}

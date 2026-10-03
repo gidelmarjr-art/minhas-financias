@@ -1,0 +1,87 @@
+.login {
+  display: grid;
+  grid-template-columns: minmax(320px, 5fr) 6fr;
+  min-height: 100%;
+}
+.login__marca {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  padding: 48px clamp(28px, 5vw, 72px);
+  background: var(--verde-escuro);
+  color: #e9f3ef;
+}
+.login__logo {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #f1d9a0;
+  color: var(--verde-escuro);
+  font-family: var(--fonte-titulo);
+  font-size: 26px;
+  font-weight: 700;
+}
+.login__marca h1 {
+  max-width: 14ch;
+  font-size: clamp(32px, 4.2vw, 52px);
+  line-height: 1.05;
+  color: #fff;
+}
+.login__marca p {
+  max-width: 38ch;
+  color: #b9d3ca;
+  font-size: 17px;
+}
+
+.login__painel {
+  display: grid;
+  place-items: center;
+  padding: 32px 20px;
+}
+.login__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 380px;
+}
+.login__form h2 {
+  font-size: 28px;
+}
+.login__sub {
+  margin-top: -8px;
+  color: var(--tinta-suave);
+}
+.login__form code {
+  font-size: 13px;
+}
+
+@media (max-width: 800px) {
+  .login {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .login__marca {
+    gap: 10px;
+    padding: 28px 24px;
+  }
+  .login__marca p {
+    display: none;
+  }
+  .login__logo {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+  .login__marca h1 {
+    max-width: none;
+    font-size: 28px;
+  }
+  .login__painel {
+    align-items: start;
+    padding-top: 28px;
+  }
+}

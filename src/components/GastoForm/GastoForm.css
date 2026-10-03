@@ -1,0 +1,32 @@
+.gasto-form {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 14px 16px;
+  align-items: end;
+}
+.gasto-form__erro,
+.gasto-form__acoes {
+  grid-column: 1 / -1;
+}
+.gasto-form__acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 720px) {
+  .gasto-form {
+    grid-template-columns: 1fr 1fr;
+  }
+  .gasto-form__nome {
+    grid-column: 1 / -1;
+  }
+  .gasto-form__acoes .btn {
+    flex: 1;
+  }
+}
+@media (max-width: 420px) {
+  .gasto-form {
+    grid-template-columns: 1fr;
+  }
+}

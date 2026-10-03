@@ -1,0 +1,18 @@
+.rota-protegida__carregando {
+  display: grid;
+  place-items: center;
+  height: 100%;
+}
+.rota-protegida__spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--linha);
+  border-top-color: var(--verde);
+  border-radius: 50%;
+  animation: rota-giro 0.8s linear infinite;
+}
+@keyframes rota-giro {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,47 @@
+.month-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--linha);
+  border-radius: 12px;
+  background: var(--superficie);
+}
+.month-picker__seta {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  cursor: pointer;
+}
+.month-picker__seta:hover {
+  background: var(--verde-claro);
+  color: var(--verde-escuro);
+}
+.month-picker__mes {
+  min-width: 140px;
+  font-family: var(--fonte-titulo);
+  font-weight: 600;
+  text-align: center;
+}
+.month-picker__hoje {
+  height: 32px;
+  margin-left: 4px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--verde-claro);
+  color: var(--verde-escuro);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 520px) {
+  .month-picker__mes {
+    min-width: 112px;
+  }
+}

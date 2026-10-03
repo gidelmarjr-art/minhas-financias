@@ -1,0 +1,144 @@
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  width: 260px;
+  padding: 24px 16px;
+  background: var(--verde-escuro);
+  color: #e9f3ef;
+}
+
+.sidebar__marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px 28px;
+}
+.sidebar__logo {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #f1d9a0;
+  color: var(--verde-escuro);
+  font-family: var(--fonte-titulo);
+  font-weight: 700;
+  font-size: 20px;
+}
+.sidebar__nome {
+  font-family: var(--fonte-titulo);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 10px;
+  color: #b9d3ca;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.sidebar__link:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+.sidebar__link.active {
+  background: #f5f6f3;
+  color: var(--verde-escuro);
+  font-weight: 600;
+}
+.sidebar__rotulo-curto {
+  display: none;
+}
+
+.sidebar__rodape {
+  margin-top: auto;
+  padding: 16px 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+.sidebar__email {
+  margin-bottom: 8px;
+  overflow: hidden;
+  font-size: 13px;
+  color: #9fc0b5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sidebar__sair {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border: 0;
+  background: none;
+  color: #e9f3ef;
+  font-weight: 500;
+  cursor: pointer;
+}
+.sidebar__sair:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* Celular e tablet: a barra lateral vira barra inferior */
+@media (max-width: 900px) {
+  .sidebar {
+    inset: auto 0 0 0;
+    flex-direction: row;
+    width: 100%;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -4px 20px rgba(20, 34, 30, 0.18);
+  }
+  .sidebar__marca,
+  .sidebar__email {
+    display: none;
+  }
+  .sidebar__nav {
+    flex: 1;
+    flex-direction: row;
+    gap: 2px;
+  }
+  .sidebar__link {
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    min-height: 54px;
+    padding: 4px;
+    font-size: 12px;
+    text-align: center;
+  }
+  .sidebar__rotulo-longo {
+    display: none;
+  }
+  .sidebar__rotulo-curto {
+    display: inline;
+  }
+  .sidebar__rodape {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .sidebar__sair {
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    min-width: 56px;
+    min-height: 54px;
+    padding: 4px;
+    font-size: 12px;
+  }
+}
