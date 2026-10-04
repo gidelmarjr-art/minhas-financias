@@ -70,6 +70,10 @@
   font-size: 12px;
   font-weight: 600;
 }
+.lista-gastos__tag--credito {
+  background: var(--verde-claro);
+  color: var(--verde-escuro);
+}
 .lista-gastos__info small {
   color: var(--tinta-suave);
 }
@@ -106,4 +110,9 @@
     min-width: 0;
     margin-left: auto;
   }
+}
+
+.lista-gastos__tag--debito {
+  background: #e6eef8;
+  color: #234a7a;
 }

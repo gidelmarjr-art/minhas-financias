@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react';
+import SeletorBanco from '../SeletorBanco/SeletorBanco';
+import SeletorForma from '../SeletorForma/SeletorForma';
 import { dataMaisMeses, dataPadrao, moeda, parseValor, rotuloMes } from '../../lib/format';
 import './GastoForm.css';
+
+const FORMAS_PERMITIDAS = {
+  fixo: ['debito', 'credito', 'manual'],
+  variavel: ['debito', 'credito', 'manual'],
+  parcelado: ['credito', 'manual'],
+};
+const FORMA_PADRAO = { fixo: 'manual', variavel: 'debito', parcelado: 'credito' };
 
 function diaInicial(gasto, mes) {
   if (gasto?.fixo?.dia_vencimento) return String(gasto.fixo.dia_vencimento);
@@ -12,7 +21,7 @@ function diaInicial(gasto, mes) {
  * Formulário de gasto. `tipo`: 'fixo' | 'variavel' | 'parcelado'.
  * Se `gasto` vier preenchido, edita; senão, cadastra.
  *
- * `onSalvar` recebe, conforme o caso:
+ * `onSalvar` recebe, conforme o caso (sempre com forma_pagamento e banco):
  *  - fixo:                   { nome, valor, dia_vencimento }
  *  - variável:               { nome, valor, data_pagamento }
  *  - parcelado (novo):       { nome, valor, parcelas, primeira_data }
@@ -24,10 +33,14 @@ export default function GastoForm({ tipo, gasto, mes, onSalvar, onCancelar }) {
   const [data, setData] = useState('');
   const [dia, setDia] = useState('');
   const [parcelas, setParcelas] = useState('');
+  const [forma, setForma] = useState(FORMA_PADRAO[tipo]);
+  const [banco, setBanco] = useState('');
   const [erro, setErro] = useState('');
   const [salvando, setSalvando] = useState(false);
 
   const novoParcelado = tipo === 'parcelado' && !gasto;
+  // Em gasto fixo já cadastrado a forma não muda (ele já gerou contas para os próximos meses).
+  const formaEditavel = !(tipo === 'fixo' && gasto);
 
   useEffect(() => {
     setNome(gasto?.nome ?? '');
@@ -35,6 +48,8 @@ export default function GastoForm({ tipo, gasto, mes, onSalvar, onCancelar }) {
     setData(gasto?.data_pagamento ?? dataPadrao(mes));
     setDia(diaInicial(gasto, mes));
     setParcelas('');
+    setForma(gasto?.forma_pagamento ?? FORMA_PADRAO[tipo]);
+    setBanco(gasto?.forma_pagamento === 'debito' ? (gasto.banco ?? '') : '');
     setErro('');
   }, [gasto, mes, tipo]);
 
@@ -51,23 +66,33 @@ export default function GastoForm({ tipo, gasto, mes, onSalvar, onCancelar }) {
     e.preventDefault();
     if (!nome.trim()) return setErro('Informe o nome do gasto.');
     if (!(valorNumerico > 0)) return setErro('Informe um valor maior que zero.');
+    if (formaEditavel && forma === 'debito' && !banco.trim()) {
+      return setErro('Escolha o banco do débito.');
+    }
 
+    const pagamento = { forma_pagamento: forma, banco: forma === 'debito' ? banco.trim() : null };
     let payload;
     if (tipo === 'fixo') {
       const diaNumero = Number(dia);
       if (!Number.isInteger(diaNumero) || diaNumero < 1 || diaNumero > 31) {
         return setErro('Informe um dia de vencimento entre 1 e 31.');
       }
-      payload = { nome: nome.trim(), valor: valorNumerico, dia_vencimento: diaNumero };
+      payload = { nome: nome.trim(), valor: valorNumerico, dia_vencimento: diaNumero, ...pagamento };
     } else if (novoParcelado) {
       if (!Number.isInteger(qtd) || qtd < 2 || qtd > 60) {
         return setErro('Informe o número de parcelas, de 2 a 60.');
       }
       if (!data) return setErro('Informe a data da primeira parcela.');
-      payload = { nome: nome.trim(), valor: valorNumerico, parcelas: qtd, primeira_data: data };
+      payload = {
+        nome: nome.trim(),
+        valor: valorNumerico,
+        parcelas: qtd,
+        primeira_data: data,
+        ...pagamento,
+      };
     } else {
       if (!data) return setErro('Informe a data de pagamento.');
-      payload = { nome: nome.trim(), valor: valorNumerico, data_pagamento: data };
+      payload = { nome: nome.trim(), valor: valorNumerico, data_pagamento: data, ...pagamento };
     }
 
     setSalvando(true);
@@ -85,6 +110,14 @@ export default function GastoForm({ tipo, gasto, mes, onSalvar, onCancelar }) {
       setSalvando(false);
     }
   }
+
+  const rotuloData = novoParcelado
+    ? 'Data da 1ª parcela'
+    : forma === 'debito'
+      ? 'Data da compra'
+      : forma === 'credito'
+        ? 'Vence na fatura em'
+        : 'Data de pagamento';
 
   const textoBotao = salvando
     ? 'Salvando…'
@@ -149,9 +182,34 @@ export default function GastoForm({ tipo, gasto, mes, onSalvar, onCancelar }) {
         </label>
       ) : (
         <label className="campo">
-          <span>{novoParcelado ? 'Data da 1ª parcela' : 'Data de pagamento'}</span>
+          <span>{rotuloData}</span>
           <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
         </label>
+      )}
+
+      <div className="gasto-form__linha">
+        <SeletorForma
+          valor={forma}
+          onChange={setForma}
+          permitidas={FORMAS_PERMITIDAS[tipo]}
+          desabilitado={!formaEditavel}
+        />
+        {!formaEditavel && (
+          <p className="gasto-form__nota">
+            Para mudar a forma de pagamento de um gasto fixo, encerre-o e cadastre de novo.
+          </p>
+        )}
+      </div>
+
+      {formaEditavel && forma === 'debito' && (
+        <div className="gasto-form__banco">
+          <SeletorBanco
+            key={`${gasto?.id ?? 'novo'}-${tipo}`}
+            valor={banco}
+            onChange={setBanco}
+            rotulo="Banco do débito"
+          />
+        </div>
       )}
 
       {previa && <p className="gasto-form__previa">{previa}</p>}

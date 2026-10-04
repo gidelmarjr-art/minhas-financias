@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CircleCheck, Clock3, Plus, TrendingUp, Trash2, Wallet } from 'lucide-react';
+import { CircleCheck, Clock3, CreditCard, Landmark, Plus, TrendingUp, Trash2 } from 'lucide-react';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import StatCard from '../../components/StatCard/StatCard';
 import StatusBadge from '../../components/StatusBadge/StatusBadge';
@@ -49,6 +49,12 @@ const TIPOS = [
   },
 ];
 
+const FORMAS = [
+  { id: 'debito', titulo: 'Gastos no débito' },
+  { id: 'credito', titulo: 'Gastos no crédito' },
+  { id: 'manual', titulo: 'Pagos manualmente' },
+];
+
 export default function Geral() {
   const { mes } = useMes();
   const { avisar } = useToast();
@@ -63,18 +69,26 @@ export default function Geral() {
   const [erroForm, setErroForm] = useState('');
   const [salvando, setSalvando] = useState(false);
 
-  const { categorias, resumo } = useMemo(() => {
+  const { categorias, formas, resumo } = useMemo(() => {
     const abertos = gastos.filter((g) => !g.pago);
     const pagos = gastos.filter((g) => g.pago);
     const entrou = soma(entradas);
 
+    const totais = (lista) => {
+      const pago = soma(lista.filter((g) => g.pago));
+      const total = soma(lista);
+      return { lista, total, pago, aPagar: total - pago };
+    };
+
     return {
-      categorias: TIPOS.map((tipo) => {
-        const lista = gastos.filter((g) => g.tipo === tipo.id);
-        const pago = soma(lista.filter((g) => g.pago));
-        const total = soma(lista);
-        return { ...tipo, lista, total, pago, aPagar: total - pago };
-      }),
+      categorias: TIPOS.map((tipo) => ({
+        ...tipo,
+        ...totais(gastos.filter((g) => g.tipo === tipo.id)),
+      })),
+      formas: FORMAS.map((forma) => ({
+        ...forma,
+        ...totais(gastos.filter((g) => g.forma_pagamento === forma.id)),
+      })),
       resumo: {
         entrou,
         total: soma(gastos),
@@ -136,6 +150,7 @@ export default function Geral() {
     }
   }
 
+  const [debito, credito] = formas;
   const fixos = categorias[0];
   const variaveis = categorias[1];
   const parcelados = categorias[2];
@@ -174,11 +189,27 @@ export default function Geral() {
           icone={Clock3}
         />
         <StatCard
-          rotulo="Saldo previsto"
-          valor={moeda(resumo.saldo)}
-          detalhe="Entradas menos todas as contas do mês"
-          tom={resumo.saldo < 0 ? 'perigo' : 'positivo'}
-          icone={Wallet}
+          rotulo="Gastos no débito"
+          valor={moeda(debito.total)}
+          detalhe={
+            debito.lista.length === 0
+              ? 'Nenhuma compra no débito'
+              : `${debito.lista.length} ${debito.lista.length === 1 ? 'compra' : 'compras'} · já pagas`
+          }
+          icone={Landmark}
+        />
+        <StatCard
+          rotulo="Gastos no crédito"
+          valor={moeda(credito.total)}
+          detalhe={
+            credito.lista.length === 0
+              ? 'Nenhuma compra no cartão'
+              : credito.aPagar > 0
+                ? `${moeda(credito.aPagar)} da fatura em aberto`
+                : 'Fatura paga'
+          }
+          tom={credito.aPagar > 0 ? 'alerta' : 'neutro'}
+          icone={CreditCard}
         />
       </section>
 
@@ -227,9 +258,23 @@ export default function Geral() {
                   <td className="numero">{moeda(resumo.pago)}</td>
                   <td className="numero">{moeda(resumo.divida)}</td>
                 </tr>
+                {formas.map((f) => (
+                  <tr key={f.id} className="geral__tabela-forma">
+                    <th scope="row">{f.titulo}</th>
+                    <td className="numero">{moeda(f.total)}</td>
+                    <td className="numero">{moeda(f.pago)}</td>
+                    <td className="numero">{moeda(f.aPagar)}</td>
+                  </tr>
+                ))}
                 <tr className="geral__tabela-entrada">
                   <th scope="row">Valores adicionados</th>
                   <td className="numero">{moeda(resumo.entrou)}</td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+                <tr className={`geral__tabela-saldo ${resumo.saldo < 0 ? 'geral__tabela-saldo--negativo' : ''}`}>
+                  <th scope="row">Saldo previsto</th>
+                  <td className="numero">{moeda(resumo.saldo)}</td>
                   <td>—</td>
                   <td>—</td>
                 </tr>
@@ -339,6 +384,19 @@ export default function Geral() {
             </ul>
           )}
         </section>
+      </div>
+
+      <div className="geral__linha-unica">
+        <ListaGastos
+          titulo="Cartão de crédito"
+          descricao="Tudo que está no crédito neste mês: variáveis, parceladas e fixas"
+          gastos={credito.lista}
+          vazio="Nenhuma compra no crédito neste mês"
+          vazioDescricao="Ao cadastrar um gasto, escolha Crédito em Forma de pagamento."
+          ocupado={carregandoGastos}
+          mostrarTipo
+          mostrarForma={false}
+        />
       </div>
 
       <Modal aberto={modalAberto} titulo="Registrar entrada" onFechar={() => setModalAberto(false)}>

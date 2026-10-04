@@ -71,7 +71,13 @@ export default function CadastroGastos() {
   async function salvar(campos) {
     if (editando) {
       if (aba === 'fixo') await fixosService.atualizarFixo(editando.fixo_id, campos, mes);
-      else await gastosService.atualizar(editando.id, campos);
+      else {
+        await gastosService.editarGasto(editando, campos);
+        const mudouForma = campos.forma_pagamento !== editando.forma_pagamento;
+        if (aba === 'parcelado' && editando.grupo_id && mudouForma) {
+          await gastosService.atualizarFormaDoGrupo(editando.grupo_id, campos.forma_pagamento);
+        }
+      }
       setEditando(null);
       avisar('Gasto atualizado');
     } else if (aba === 'fixo') {
@@ -83,7 +89,12 @@ export default function CadastroGastos() {
     } else {
       await gastosService.criarVariavel(campos);
       const mesDoGasto = campos.data_pagamento.slice(0, 7);
-      avisar(mesDoGasto === mes ? 'Gasto cadastrado' : `Gasto cadastrado em ${rotuloMes(mesDoGasto)}`);
+      const sufixo = campos.forma_pagamento === 'debito' ? ' e já marcado como pago' : '';
+      avisar(
+        mesDoGasto === mes
+          ? `Gasto cadastrado${sufixo}`
+          : `Gasto cadastrado em ${rotuloMes(mesDoGasto)}${sufixo}`,
+      );
     }
     recarregar();
   }
@@ -151,7 +162,7 @@ export default function CadastroGastos() {
           {editando && aba === 'fixo'
             ? `A alteração vale a partir de ${rotuloMes(mes)}, nas contas ainda não pagas.`
             : editando && aba === 'parcelado'
-              ? 'Você está editando só esta parcela.'
+              ? 'Nome, valor e data valem só para esta parcela. A forma de pagamento vale para a compra toda.'
               : textos.ajuda}
         </p>
         <GastoForm

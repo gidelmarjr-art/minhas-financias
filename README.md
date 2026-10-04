@@ -9,13 +9,16 @@ Dashboard responsivo (React + Vite) para controlar as contas mês a mês, com lo
   - *Gastos fixos*: repetem todo mês até você encerrar (nome, valor e dia do vencimento).
   - *Gastos variáveis*: valem só para o mês da data de pagamento.
   - *Compras parceladas*: valor da parcela, nº de parcelas e data da 1ª; uma parcela entra em cada mês.
+- **Forma de pagamento** — cada gasto é *débito* (já entra como pago), *crédito* (vai para a fatura do cartão)
+  ou *pagar manualmente* (boleto, Pix, conta). Parcelados aceitam crédito ou manual.
 - **Confirmar pagamento** — marca a conta como paga com a data do pagamento e o banco usado (e permite desfazer).
 
 ## Como rodar
 
 1. `npm install`
 2. No Supabase, abra **SQL Editor** e rode `supabase/schema.sql` (instalação nova) ou, se já tinha rodado a
-   versão anterior, `supabase/migracao-tipos-de-gasto.sql`.
+   versão anterior, rode nesta ordem `supabase/migracao-tipos-de-gasto.sql` e
+   `supabase/migracao-forma-pagamento.sql`.
 3. Em **Authentication → Users**, crie o seu usuário (e-mail + senha). Desative o cadastro público em
    **Authentication → Providers → Email → Allow new users to sign up** para ninguém mais criar conta.
 4. Copie `.env.example` para `.env` e preencha `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`

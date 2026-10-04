@@ -102,7 +102,16 @@ export function dataMaisMeses(iso, n) {
 }
 
 export function rotuloTipo(gasto) {
-  if (gasto.tipo === 'fixo') return 'Fixo';
-  if (gasto.tipo === 'parcelado') return `Parcela ${gasto.parcela_numero}/${gasto.parcela_total}`;
-  return 'Variável';
+  let base = 'Variável';
+  if (gasto.tipo === 'fixo') base = 'Fixo';
+  if (gasto.tipo === 'parcelado') base = `Parcela ${gasto.parcela_numero}/${gasto.parcela_total}`;
+  if (gasto.forma_pagamento === 'credito') return `${base} · Crédito`;
+  if (gasto.forma_pagamento === 'debito') return `${base} · Débito`;
+  return base;
 }
+
+export const FORMAS_PAGAMENTO = {
+  debito: 'Débito',
+  credito: 'Crédito',
+  manual: 'Pagar manualmente',
+};

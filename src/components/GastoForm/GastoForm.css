@@ -7,10 +7,21 @@
 .gasto-form--quatro {
   grid-template-columns: 2fr 1fr 1fr 1fr;
 }
+.gasto-form__forma,
+.gasto-form__linha,
 .gasto-form__previa,
 .gasto-form__erro,
 .gasto-form__acoes {
   grid-column: 1 / -1;
+}
+.gasto-form__banco {
+  grid-column: 1 / -1;
+  max-width: 380px;
+}
+.gasto-form__nota {
+  margin-top: 8px;
+  color: var(--tinta-suave);
+  font-size: 13.5px;
 }
 .gasto-form__previa {
   padding: 10px 14px;

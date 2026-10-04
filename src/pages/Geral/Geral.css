@@ -4,8 +4,15 @@
 
 .geral__cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 16px;
+}
+/* Primeira linha: situação do mês (3 cartões). Segunda: como você paga (2 cartões). */
+.geral__cards > :nth-child(-n + 3) {
+  grid-column: span 2;
+}
+.geral__cards > :nth-child(n + 4) {
+  grid-column: span 3;
 }
 
 .geral__progresso {
@@ -104,9 +111,15 @@
   gap: 14px;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 900px) {
   .geral__cards {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .geral__cards > :nth-child(n) {
+    grid-column: span 1;
+  }
+  .geral__cards > :last-child {
+    grid-column: 1 / -1;
   }
 }
 @media (max-width: 800px) {
@@ -118,6 +131,9 @@
   .geral__cards {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+  .geral__cards > :nth-child(n) {
+    grid-column: auto;
   }
   .geral__item {
     flex-wrap: wrap;
@@ -180,5 +196,28 @@
   font-size: 13.5px;
 }
 .geral__colunas + .geral__colunas {
+  margin-top: 16px;
+}
+
+.geral__tabela-forma th,
+.geral__tabela-forma td {
+  color: var(--tinta-suave);
+  font-weight: 500;
+}
+.geral__tabela-forma th:first-child {
+  padding-left: 14px;
+  font-weight: 500;
+}
+.geral__tabela-saldo th,
+.geral__tabela-saldo td {
+  border-top: 2px solid var(--tinta);
+  color: var(--verde);
+  font-weight: 700;
+}
+.geral__tabela-saldo--negativo th,
+.geral__tabela-saldo--negativo td {
+  color: var(--vermelho);
+}
+.geral__linha-unica {
   margin-top: 16px;
 }

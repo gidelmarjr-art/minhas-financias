@@ -110,3 +110,88 @@
     padding: 0 8px;
   }
 }
+
+/* Fatura do cartão de crédito */
+.pagamentos__bloco small {
+  color: var(--tinta-suave);
+  font-size: 13px;
+}
+.pagamentos__fatura,
+.pagamentos__lista + .pagamentos__lista,
+.pagamentos__fatura + .pagamentos__lista {
+  margin-top: 16px;
+}
+.pagamentos__fatura {
+  padding: 20px;
+}
+.pagamentos__fatura-topo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.pagamentos__fatura-icone {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--verde-claro);
+  color: var(--verde);
+}
+.pagamentos__fatura-texto {
+  flex: 1;
+  min-width: 0;
+}
+.pagamentos__fatura-texto h2 {
+  font-size: 18px;
+}
+.pagamentos__fatura-texto p {
+  color: var(--tinta-suave);
+  font-size: 14px;
+}
+.pagamentos__fatura-total {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.pagamentos__fatura-total strong {
+  font-size: 24px;
+}
+.pagamentos__detalhes {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--linha);
+}
+.pagamentos__detalhes summary {
+  color: var(--verde);
+  font-weight: 600;
+  cursor: pointer;
+}
+.pagamentos__item--compacto {
+  padding: 10px 0;
+}
+.pagamentos__titulo-secao {
+  padding: 12px 0 4px;
+  font-size: 18px;
+}
+
+@media (max-width: 720px) {
+  .pagamentos__fatura-topo {
+    flex-wrap: wrap;
+  }
+  .pagamentos__fatura-total {
+    flex-basis: 100%;
+    justify-content: space-between;
+  }
+}
+@media (max-width: 480px) {
+  .pagamentos__fatura-total {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .pagamentos__fatura-total strong {
+    text-align: left;
+  }
+}

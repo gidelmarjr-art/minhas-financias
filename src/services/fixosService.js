@@ -23,18 +23,26 @@ export async function listarAtivosNoMes(mes) {
 /**
  * Cria, se ainda não existir, a conta de cada gasto fixo ativo no mês.
  * Assim cada mês tem sua própria linha, com status e banco de pagamento próprios.
+ * No débito automático a conta já nasce paga, com o banco do cadastro.
  */
 export async function garantirFixosDoMes(mes) {
   const fixos = await listarAtivosNoMes(mes);
   if (fixos.length === 0) return;
 
-  const linhas = fixos.map((f) => ({
-    fixo_id: f.id,
-    tipo: 'fixo',
-    nome: f.nome,
-    valor: f.valor,
-    data_pagamento: dataDoMes(mes, f.dia_vencimento),
-  }));
+  const linhas = fixos.map((f) => {
+    const data = dataDoMes(mes, f.dia_vencimento);
+    const base = {
+      fixo_id: f.id,
+      tipo: 'fixo',
+      nome: f.nome,
+      valor: f.valor,
+      data_pagamento: data,
+      forma_pagamento: f.forma_pagamento,
+    };
+    return f.forma_pagamento === 'debito'
+      ? { ...base, pago: true, data_pago: data, banco: f.banco }
+      : base;
+  });
 
   resolver(
     await supabase
@@ -43,44 +51,49 @@ export async function garantirFixosDoMes(mes) {
   );
 }
 
-export async function criarFixo({ nome, valor, dia_vencimento }, mes) {
+export async function criarFixo({ nome, valor, dia_vencimento, forma_pagamento, banco }, mes) {
   resolver(
-    await supabase
-      .from(TABELA)
-      .insert([{ nome, valor, dia_vencimento, inicio_mes: `${mes}-01` }]),
+    await supabase.from(TABELA).insert([
+      {
+        nome,
+        valor,
+        dia_vencimento,
+        inicio_mes: `${mes}-01`,
+        forma_pagamento,
+        banco: forma_pagamento === 'debito' ? banco : null,
+      },
+    ]),
   );
 }
 
-/** Altera o fixo e as contas ainda não pagas do mês informado em diante. */
+/**
+ * Altera o fixo e as contas do mês informado em diante que ainda não foram pagas
+ * (no débito automático, todas — elas já nascem pagas). A forma de pagamento não muda.
+ */
 export async function atualizarFixo(fixoId, { nome, valor, dia_vencimento }, mes) {
   resolver(await supabase.from(TABELA).update({ nome, valor, dia_vencimento }).eq('id', fixoId));
 
   const linhas = resolver(
     await supabase
       .from('gastos')
-      .select('id, data_pagamento')
+      .select('id, data_pagamento, pago, forma_pagamento')
       .eq('fixo_id', fixoId)
-      .eq('pago', false)
       .gte('mes_referencia', `${mes}-01`),
   );
 
   await Promise.all(
-    linhas.map(async (linha) =>
-      resolver(
-        await supabase
-          .from('gastos')
-          .update({
-            nome,
-            valor,
-            data_pagamento: dataDoMes(linha.data_pagamento.slice(0, 7), dia_vencimento),
-          })
-          .eq('id', linha.id),
-      ),
-    ),
+    linhas
+      .filter((l) => !l.pago || l.forma_pagamento === 'debito')
+      .map(async (linha) => {
+        const data = dataDoMes(linha.data_pagamento.slice(0, 7), dia_vencimento);
+        const campos = { nome, valor, data_pagamento: data };
+        if (linha.forma_pagamento === 'debito') campos.data_pago = data;
+        return resolver(await supabase.from('gastos').update(campos).eq('id', linha.id));
+      }),
   );
 }
 
-/** Para de repetir a partir do mês informado. Meses já pagos continuam no histórico. */
+/** Para de repetir a partir do mês informado. Meses já pagos manualmente continuam no histórico. */
 export async function encerrarFixo(fixoId, mes) {
   resolver(
     await supabase
@@ -93,7 +106,7 @@ export async function encerrarFixo(fixoId, mes) {
       .from('gastos')
       .delete()
       .eq('fixo_id', fixoId)
-      .eq('pago', false)
+      .or('pago.eq.false,forma_pagamento.eq.debito')
       .gte('mes_referencia', `${mes}-01`),
   );
 }
