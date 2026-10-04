@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { BadgeCheck, LayoutDashboard, LogOut, ReceiptText } from 'lucide-react';
+import { BadgeCheck, CalendarClock, ChartNoAxesCombined, LayoutDashboard, LogOut, ReceiptText } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import './Sidebar.css';
 
@@ -7,6 +7,8 @@ const ITENS = [
   { to: '/geral', rotulo: 'Geral', curto: 'Geral', icone: LayoutDashboard },
   { to: '/gastos', rotulo: 'Cadastro de gastos', curto: 'Gastos', icone: ReceiptText },
   { to: '/pagamentos', rotulo: 'Confirmar pagamento', curto: 'Pagamentos', icone: BadgeCheck },
+  { to: '/previsao-gastos', rotulo: 'Previsão de gastos', curto: 'Previsão', icone: CalendarClock },
+  { to: '/gastos-passados', rotulo: 'Gastos passados', curto: 'Histórico', icone: ChartNoAxesCombined },
 ];
 
 export default function Sidebar() {

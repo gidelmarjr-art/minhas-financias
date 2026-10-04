@@ -1,22 +1,15 @@
-.gastos-passados {
-  padding-bottom: 32px;
-}
-
-.form-passados {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-width: 500px;
-  margin-top: 16px;
-}
-
-.form-passados .campo {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.form-passados label {
-  font-weight: 500;
-  font-size: 14px;
-}
+.gastos-passados { padding-bottom: 32px; }
+.gastos-passados__grid { display: grid; grid-template-columns: minmax(280px, .8fr) minmax(0, 1.2fr); gap: 16px; }
+.gastos-passados__formulario, .gastos-passados__lista { padding: 20px; }
+.gastos-passados h2 { font-size: 18px; }
+.gastos-passados__formulario > p, .gastos-passados__lista header p { margin-top: 4px; color: var(--tinta-suave); font-size: 14px; }
+.form-passados { display: flex; flex-direction: column; gap: 14px; margin-top: 20px; }
+.form-passados textarea { width: 100%; resize: vertical; padding: 11px 14px; border: 1px solid var(--linha-forte); border-radius: var(--raio-campo); background: var(--fundo); }
+.form-passados textarea:focus { border-color: var(--destaque); outline: 3px solid rgba(255, 255, 255, .16); outline-offset: 0; }
+.gastos-passados__item { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; align-items: center; gap: 10px; padding: 14px 0; border-top: 1px solid var(--linha); }
+.gastos-passados__item:first-child { margin-top: 14px; }
+.gastos-passados__item div { min-width: 0; }
+.gastos-passados__item small { display: block; overflow: hidden; margin-top: 2px; color: var(--tinta-suave); text-overflow: ellipsis; white-space: nowrap; }
+.gastos-passados__item .numero { font-weight: 700; }
+@media (max-width: 800px) { .gastos-passados__grid { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .gastos-passados__item { grid-template-columns: minmax(0, 1fr) auto auto; } .gastos-passados__item .numero { grid-column: 1; } }

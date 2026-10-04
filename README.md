@@ -16,12 +16,16 @@ Dashboard responsivo (React + Vite), em preto e cinza, para controlar as contas 
   fechamento entram na fatura daquele mês, as seguintes na do mês seguinte. Parcelas caem uma por fatura.
 - **Confirmar pagamento** — marca a conta como paga com a data do pagamento e o banco usado (e permite desfazer).
 
+- **Previsão de gastos** — detalha gastos fixos, variáveis, parcelados e a fatura, sem duplicar o valor do crédito no total previsto.
+- **Gastos passados** — registra um total consolidado e observações para cada mês anterior; o mesmo mês pode ser atualizado.
+
 ## Como rodar
 
 1. `npm install`
 2. No Supabase, abra **SQL Editor** e rode `supabase/schema.sql` (instalação nova) ou, se já tinha rodado a
-   versão anterior, rode nesta ordem `supabase/migracao-tipos-de-gasto.sql` e
-   `supabase/migracao-forma-pagamento.sql` e `supabase/migracao-fatura-cartao.sql`.
+   versão anterior, rode nesta ordem `supabase/migracao-tipos-de-gasto.sql`,
+   `supabase/migracao-forma-pagamento.sql`, `supabase/migracao-fatura-cartao.sql` e
+   `supabase/migracao-gastos-passados.sql`.
 3. Em **Authentication → Users**, crie o seu usuário (e-mail + senha). Desative o cadastro público em
    **Authentication → Providers → Email → Allow new users to sign up** para ninguém mais criar conta.
 4. Copie `.env.example` para `.env` e preencha `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`

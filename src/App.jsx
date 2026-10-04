@@ -10,7 +10,7 @@ import Geral from './pages/Geral/Geral';
 import CadastroGastos from './pages/CadastroGastos/CadastroGastos';
 import ConfirmarPagamento from './pages/ConfirmarPagamento/ConfirmarPagamento';
 import PrevisaoGastos from './pages/PrevisaoGastos/PrevisaoGastos';
-import GastosPassados from './pages/GastosPassados/GastosPassados'; 
+import GastosPassados from './pages/GastosPassados/GastosPassados';
 
 export default function App() {
   return (

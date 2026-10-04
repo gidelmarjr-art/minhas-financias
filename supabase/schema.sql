@@ -63,6 +63,19 @@ create table if not exists public.config_cartao (
   updated_at      timestamptz not null default now()
 );
 
+-- 5) Histórico consolidado de meses anteriores
+create table if not exists public.gastos_passados (
+  id              uuid primary key default gen_random_uuid(),
+  user_id         uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  mes_referencia  date not null,
+  valor_total     numeric(12,2) not null check (valor_total > 0),
+  observacao      text,
+  created_at      timestamptz not null default now(),
+  updated_at      timestamptz not null default now(),
+  constraint gastos_passados_mes_inicio check (mes_referencia = date_trunc('month', mes_referencia)::date),
+  constraint gastos_passados_usuario_mes_unico unique (user_id, mes_referencia)
+);
+
 -- 5) Índices
 create index if not exists gastos_user_data_idx   on public.gastos (user_id, data_pagamento);
 create index if not exists gastos_user_pago_idx   on public.gastos (user_id, pago, data_pagamento);
@@ -70,12 +83,14 @@ create index if not exists gastos_grupo_idx       on public.gastos (grupo_id);
 create index if not exists gastos_forma_idx       on public.gastos (user_id, forma_pagamento, pago);
 create index if not exists gastos_fixos_user_idx  on public.gastos_fixos (user_id, inicio_mes);
 create index if not exists entradas_user_data_idx on public.entradas (user_id, data_entrada);
+create index if not exists gastos_passados_user_mes_idx on public.gastos_passados (user_id, mes_referencia desc);
 
 -- 6) Segurança: cada usuário só enxerga e altera os próprios dados
 alter table public.gastos_fixos enable row level security;
 alter table public.gastos       enable row level security;
 alter table public.entradas     enable row level security;
 alter table public.config_cartao enable row level security;
+alter table public.gastos_passados enable row level security;
 
 drop policy if exists "gastos_fixos: dono tem acesso total" on public.gastos_fixos;
 create policy "gastos_fixos: dono tem acesso total" on public.gastos_fixos
@@ -94,6 +109,11 @@ create policy "entradas: dono tem acesso total" on public.entradas
 
 drop policy if exists "config_cartao: dono tem acesso total" on public.config_cartao;
 create policy "config_cartao: dono tem acesso total" on public.config_cartao
+  for all to authenticated
+  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+drop policy if exists "gastos_passados: dono tem acesso total" on public.gastos_passados;
+create policy "gastos_passados: dono tem acesso total" on public.gastos_passados
   for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
