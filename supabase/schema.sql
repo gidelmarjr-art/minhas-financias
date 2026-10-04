@@ -1,7 +1,7 @@
 -- Minhas Finanças — schema completo (instalação nova).
 -- Cole tudo no SQL Editor do Supabase e clique em Run. Pode rodar mais de uma vez.
 -- Se você já tinha rodado uma versão anterior, use as migrações, nesta ordem:
---   1) migracao-tipos-de-gasto.sql   2) migracao-forma-pagamento.sql
+--   1) migracao-tipos-de-gasto.sql   2) migracao-forma-pagamento.sql   3) migracao-fatura-cartao.sql
 
 -- 1) Gastos fixos: modelo que se repete todo mês até ser encerrado
 create table if not exists public.gastos_fixos (
@@ -27,6 +27,7 @@ create table if not exists public.gastos (
   nome            text not null,
   valor           numeric(12,2) not null check (valor > 0),
   data_pagamento  date not null,
+  data_compra     date,                       -- compra no cartão: data real (data_pagamento = vencimento da fatura)
   tipo            text not null default 'variavel',
   forma_pagamento text not null default 'manual',   -- debito (já pago), credito (fatura) ou manual
   fixo_id         uuid references public.gastos_fixos(id) on delete set null,
@@ -54,7 +55,15 @@ create table if not exists public.entradas (
   created_at    timestamptz not null default now()
 );
 
--- 4) Índices
+-- 4) Cartão de crédito: fechamento e vencimento da fatura (uma linha por usuário)
+create table if not exists public.config_cartao (
+  user_id         uuid primary key default auth.uid() references auth.users(id) on delete cascade,
+  dia_fechamento  int not null default 20 check (dia_fechamento between 1 and 31),
+  dia_vencimento  int not null default 27 check (dia_vencimento between 1 and 31),
+  updated_at      timestamptz not null default now()
+);
+
+-- 5) Índices
 create index if not exists gastos_user_data_idx   on public.gastos (user_id, data_pagamento);
 create index if not exists gastos_user_pago_idx   on public.gastos (user_id, pago, data_pagamento);
 create index if not exists gastos_grupo_idx       on public.gastos (grupo_id);
@@ -62,10 +71,11 @@ create index if not exists gastos_forma_idx       on public.gastos (user_id, for
 create index if not exists gastos_fixos_user_idx  on public.gastos_fixos (user_id, inicio_mes);
 create index if not exists entradas_user_data_idx on public.entradas (user_id, data_entrada);
 
--- 5) Segurança: cada usuário só enxerga e altera os próprios dados
+-- 6) Segurança: cada usuário só enxerga e altera os próprios dados
 alter table public.gastos_fixos enable row level security;
 alter table public.gastos       enable row level security;
 alter table public.entradas     enable row level security;
+alter table public.config_cartao enable row level security;
 
 drop policy if exists "gastos_fixos: dono tem acesso total" on public.gastos_fixos;
 create policy "gastos_fixos: dono tem acesso total" on public.gastos_fixos
@@ -79,6 +89,11 @@ create policy "gastos: dono tem acesso total" on public.gastos
 
 drop policy if exists "entradas: dono tem acesso total" on public.entradas;
 create policy "entradas: dono tem acesso total" on public.entradas
+  for all to authenticated
+  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+drop policy if exists "config_cartao: dono tem acesso total" on public.config_cartao;
+create policy "config_cartao: dono tem acesso total" on public.config_cartao
   for all to authenticated
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
 

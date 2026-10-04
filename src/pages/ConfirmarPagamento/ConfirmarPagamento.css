@@ -17,7 +17,7 @@
   font-size: 24px;
 }
 .pagamentos__bloco--pago strong {
-  color: var(--verde);
+  color: var(--positivo);
 }
 
 .pagamentos__abas {
@@ -40,8 +40,8 @@
   cursor: pointer;
 }
 .pagamentos__abas button.ativa {
-  background: var(--verde);
-  color: #fff;
+  background: var(--destaque);
+  color: var(--sobre-destaque);
 }
 
 .pagamentos__lista {
@@ -136,8 +136,8 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: var(--verde-claro);
-  color: var(--verde);
+  background: var(--destaque-suave);
+  color: var(--destaque);
 }
 .pagamentos__fatura-texto {
   flex: 1;
@@ -164,7 +164,7 @@
   border-top: 1px solid var(--linha);
 }
 .pagamentos__detalhes summary {
-  color: var(--verde);
+  color: var(--destaque);
   font-weight: 600;
   cursor: pointer;
 }
@@ -194,4 +194,14 @@
   .pagamentos__fatura-total strong {
     text-align: left;
   }
+}
+
+.pagamentos__link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--destaque);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
 }

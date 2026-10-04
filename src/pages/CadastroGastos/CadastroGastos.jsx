@@ -10,7 +10,8 @@ import { useMes } from '../../contexts/MesContext';
 import { useGastos } from '../../hooks/useGastos';
 import * as gastosService from '../../services/gastosService';
 import * as fixosService from '../../services/fixosService';
-import { rotuloMes } from '../../lib/format';
+import { useCartao } from '../../contexts/CartaoContext';
+import { rotuloMes, vencimentoDaFatura } from '../../lib/format';
 import './CadastroGastos.css';
 
 const TEXTOS = {
@@ -24,7 +25,8 @@ const TEXTOS = {
   },
   variavel: {
     novo: 'Novo gasto variável',
-    ajuda: 'Vale só para o mês da data de pagamento. Ex.: mercado, farmácia, conserto.',
+    ajuda:
+      'Vale só para um mês: o da data de pagamento. No cartão de crédito, vale o mês da fatura em que a compra cai. Ex.: mercado, farmácia, conserto.',
     lista: 'Gastos variáveis do mês',
     vazio: 'Nenhum gasto variável neste mês',
     vazioDescricao: 'Use o formulário acima para cadastrar o primeiro.',
@@ -41,6 +43,7 @@ const TEXTOS = {
 
 export default function CadastroGastos() {
   const { mes } = useMes();
+  const { cartao } = useCartao();
   const { avisar } = useToast();
   const { gastos, carregando, erro, recarregar } = useGastos(mes);
   const [aba, setAba] = useState('fixo');
@@ -85,16 +88,26 @@ export default function CadastroGastos() {
       avisar(`Gasto fixo cadastrado. Ele entra todo mês a partir de ${rotuloMes(mes)}`);
     } else if (aba === 'parcelado') {
       await gastosService.criarParcelado(campos);
-      avisar(`Compra cadastrada em ${campos.parcelas} parcelas`);
+      if (campos.forma_pagamento === 'credito') {
+        const mesFatura = vencimentoDaFatura(campos.primeira_data, cartao).slice(0, 7);
+        avisar(`Compra em ${campos.parcelas} parcelas. A 1ª entra na fatura de ${rotuloMes(mesFatura)}`);
+      } else {
+        avisar(`Compra cadastrada em ${campos.parcelas} parcelas`);
+      }
     } else {
       await gastosService.criarVariavel(campos);
-      const mesDoGasto = campos.data_pagamento.slice(0, 7);
-      const sufixo = campos.forma_pagamento === 'debito' ? ' e já marcado como pago' : '';
-      avisar(
-        mesDoGasto === mes
-          ? `Gasto cadastrado${sufixo}`
-          : `Gasto cadastrado em ${rotuloMes(mesDoGasto)}${sufixo}`,
-      );
+      if (campos.forma_pagamento === 'credito') {
+        const mesFatura = vencimentoDaFatura(campos.data_pagamento, cartao).slice(0, 7);
+        avisar(`Compra no cartão cadastrada na fatura de ${rotuloMes(mesFatura)}`);
+      } else {
+        const mesDoGasto = campos.data_pagamento.slice(0, 7);
+        const sufixo = campos.forma_pagamento === 'debito' ? ' e já marcado como pago' : '';
+        avisar(
+          mesDoGasto === mes
+            ? `Gasto cadastrado${sufixo}`
+            : `Gasto cadastrado em ${rotuloMes(mesDoGasto)}${sufixo}`,
+        );
+      }
     }
     recarregar();
   }

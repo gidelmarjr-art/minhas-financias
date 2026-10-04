@@ -9,6 +9,7 @@
 }
 .gasto-form__forma,
 .gasto-form__linha,
+.gasto-form__fatura,
 .gasto-form__previa,
 .gasto-form__erro,
 .gasto-form__acoes {
@@ -26,8 +27,8 @@
 .gasto-form__previa {
   padding: 10px 14px;
   border-radius: var(--raio-campo);
-  background: var(--verde-claro);
-  color: var(--verde-escuro);
+  background: var(--destaque-suave);
+  color: var(--destaque-forte);
   font-size: 14px;
 }
 .gasto-form__acoes {
@@ -52,5 +53,34 @@
   .gasto-form,
   .gasto-form--quatro {
     grid-template-columns: 1fr;
+  }
+}
+
+.gasto-form__fatura {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px dashed var(--linha);
+  border-radius: var(--raio-campo);
+  color: var(--tinta-suave);
+  font-size: 14px;
+}
+.gasto-form__link {
+  flex-shrink: 0;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--destaque);
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+@media (max-width: 520px) {
+  .gasto-form__fatura {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
   }
 }

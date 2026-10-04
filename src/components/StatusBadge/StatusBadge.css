@@ -9,8 +9,8 @@
   white-space: nowrap;
 }
 .status-badge--pago {
-  background: var(--verde-claro);
-  color: var(--verde-escuro);
+  background: var(--positivo-suave);
+  color: var(--positivo);
 }
 .status-badge--pendente {
   background: var(--ambar-claro);

@@ -1,5 +1,12 @@
 import { supabase } from '../lib/supabaseClient';
-import { dataMaisMeses, deslocarMes, intervaloDoMes, mesAtual } from '../lib/format';
+import {
+  dataMaisMeses,
+  deslocarMes,
+  intervaloDoMes,
+  mesAtual,
+  vencimentoDaFatura,
+} from '../lib/format';
+import { obterConfig } from './cartaoService';
 import { garantirFixosDoMes } from './fixosService';
 
 const TABELA = 'gastos';
@@ -37,6 +44,16 @@ export async function listarProximos(limite = 6) {
   );
 }
 
+/**
+ * No crédito, a data informada é a da COMPRA: ela define em qual fatura a conta cai
+ * (data_pagamento = vencimento dessa fatura). `deslocamento` leva a parcela para a fatura seguinte.
+ */
+async function datasDoCredito(dataCompra, deslocamento = 0) {
+  const cartao = await obterConfig();
+  const vencimento = vencimentoDaFatura(dataCompra, cartao);
+  return { data_compra: dataCompra, data_pagamento: dataMaisMeses(vencimento, deslocamento) };
+}
+
 /** Campos de pagamento de uma conta nova: no débito ela já nasce paga. */
 function camposDePagamento(forma, data, banco) {
   if (forma === 'debito') return { forma_pagamento: 'debito', pago: true, data_pago: data, banco };
@@ -45,13 +62,15 @@ function camposDePagamento(forma, data, banco) {
 
 /** Gasto variável: vale só para o mês da data de pagamento. */
 export async function criarVariavel({ nome, valor, data_pagamento, forma_pagamento, banco }) {
+  const datas =
+    forma_pagamento === 'credito' ? await datasDoCredito(data_pagamento) : { data_pagamento };
   resolver(
     await supabase.from(TABELA).insert([
       {
         nome,
         valor,
-        data_pagamento,
         tipo: 'variavel',
+        ...datas,
         ...camposDePagamento(forma_pagamento, data_pagamento, banco),
       },
     ]),
@@ -61,16 +80,23 @@ export async function criarVariavel({ nome, valor, data_pagamento, forma_pagamen
 /** Compra parcelada: cria uma conta por parcela, uma em cada mês. */
 export async function criarParcelado({ nome, valor, parcelas, primeira_data, forma_pagamento }) {
   const grupoId = crypto.randomUUID();
-  const linhas = Array.from({ length: parcelas }, (_, i) => ({
-    nome,
-    valor,
-    tipo: 'parcelado',
-    forma_pagamento,
-    grupo_id: grupoId,
-    parcela_numero: i + 1,
-    parcela_total: parcelas,
-    data_pagamento: dataMaisMeses(primeira_data, i),
-  }));
+  const linhas = [];
+  for (let i = 0; i < parcelas; i += 1) {
+    const datas =
+      forma_pagamento === 'credito'
+        ? await datasDoCredito(primeira_data, i)
+        : { data_pagamento: dataMaisMeses(primeira_data, i) };
+    linhas.push({
+      nome,
+      valor,
+      tipo: 'parcelado',
+      forma_pagamento,
+      grupo_id: grupoId,
+      parcela_numero: i + 1,
+      parcela_total: parcelas,
+      ...datas,
+    });
+  }
   resolver(await supabase.from(TABELA).insert(linhas));
 }
 
@@ -94,6 +120,13 @@ export async function editarGasto(gasto, { forma_pagamento, banco, ...resto }) {
     }
   } else if (forma_pagamento === 'debito') {
     Object.assign(campos, { data_pago: resto.data_pagamento, banco });
+  }
+
+  if (forma_pagamento === 'credito' && resto.data_pagamento) {
+    const deslocamento = gasto.tipo === 'parcelado' ? (gasto.parcela_numero ?? 1) - 1 : 0;
+    Object.assign(campos, await datasDoCredito(resto.data_pagamento, deslocamento));
+  } else if (forma_pagamento !== 'credito') {
+    campos.data_compra = null;
   }
   return atualizar(gasto.id, campos);
 }

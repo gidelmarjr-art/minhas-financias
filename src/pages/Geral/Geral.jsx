@@ -11,12 +11,15 @@ import { useToast } from '../../components/Toast/Toast';
 import { useMes } from '../../contexts/MesContext';
 import { useGastos, useProximosPagamentos } from '../../hooks/useGastos';
 import { useEntradas } from '../../hooks/useEntradas';
+import { useCartao } from '../../contexts/CartaoContext';
 import * as entradasService from '../../services/entradasService';
 import {
   dataCurta,
+  dataDiaMes,
   dataPadrao,
   moeda,
   parseValor,
+  periodoDaFatura,
   rotuloTipo,
   statusDoGasto,
   textoPrazo,
@@ -57,6 +60,7 @@ const FORMAS = [
 
 export default function Geral() {
   const { mes } = useMes();
+  const { cartao } = useCartao();
   const { avisar } = useToast();
   const { gastos, carregando: carregandoGastos, erro: erroGastos } = useGastos(mes);
   const { entradas, carregando: carregandoEntradas, erro: erroEntradas, recarregar } = useEntradas(mes);
@@ -151,6 +155,7 @@ export default function Geral() {
   }
 
   const [debito, credito] = formas;
+  const periodo = periodoDaFatura(mes, cartao);
   const fixos = categorias[0];
   const variaveis = categorias[1];
   const parcelados = categorias[2];
@@ -204,9 +209,7 @@ export default function Geral() {
           detalhe={
             credito.lista.length === 0
               ? 'Nenhuma compra no cartão'
-              : credito.aPagar > 0
-                ? `${moeda(credito.aPagar)} da fatura em aberto`
-                : 'Fatura paga'
+              : `${credito.aPagar > 0 ? `${moeda(credito.aPagar)} em aberto` : 'Fatura paga'} · ${dataDiaMes(periodo.inicio)} a ${dataDiaMes(periodo.fim)}`
           }
           tom={credito.aPagar > 0 ? 'alerta' : 'neutro'}
           icone={CreditCard}

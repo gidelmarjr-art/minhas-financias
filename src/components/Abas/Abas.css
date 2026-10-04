@@ -28,8 +28,8 @@
 }
 .abas__aba--ativa,
 .abas__aba--ativa:hover {
-  background: var(--verde);
-  color: #fff;
+  background: var(--destaque);
+  color: var(--sobre-destaque);
 }
 .abas__contagem {
   display: inline-grid;
@@ -38,13 +38,13 @@
   height: 22px;
   padding: 0 6px;
   border-radius: 999px;
-  background: var(--papel);
+  background: var(--fundo-suave);
   color: var(--tinta-suave);
   font-size: 12px;
 }
 .abas__aba--ativa .abas__contagem {
-  background: rgba(255, 255, 255, 0.22);
-  color: #fff;
+  background: rgba(0, 0, 0, 0.16);
+  color: var(--sobre-destaque);
 }
 
 @media (max-width: 640px) {

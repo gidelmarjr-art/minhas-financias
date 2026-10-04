@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { MesProvider } from './contexts/MesContext';
+import { CartaoProvider } from './contexts/CartaoContext';
 import { ToastProvider } from './components/Toast/Toast';
 import RotaProtegida from './components/RotaProtegida/RotaProtegida';
 import DashboardLayout from './layouts/DashboardLayout/DashboardLayout';
@@ -15,6 +16,7 @@ export default function App() {
       <AuthProvider>
         <MesProvider>
           <ToastProvider>
+            <CartaoProvider>
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route element={<RotaProtegida />}>
@@ -26,6 +28,7 @@ export default function App() {
               </Route>
               <Route path="*" element={<Navigate to="/geral" replace />} />
             </Routes>
+            </CartaoProvider>
           </ToastProvider>
         </MesProvider>
       </AuthProvider>

@@ -9,8 +9,9 @@
   justify-content: center;
   gap: 16px;
   padding: 48px clamp(28px, 5vw, 72px);
-  background: var(--verde-escuro);
-  color: #e9f3ef;
+  border-right: 1px solid var(--linha);
+  background: var(--lateral);
+  color: var(--tinta);
 }
 .login__logo {
   display: grid;
@@ -18,8 +19,8 @@
   width: 48px;
   height: 48px;
   border-radius: 14px;
-  background: #f1d9a0;
-  color: var(--verde-escuro);
+  background: var(--destaque);
+  color: var(--sobre-destaque);
   font-family: var(--fonte-titulo);
   font-size: 26px;
   font-weight: 700;
@@ -28,11 +29,11 @@
   max-width: 14ch;
   font-size: clamp(32px, 4.2vw, 52px);
   line-height: 1.05;
-  color: #fff;
+  color: var(--tinta);
 }
 .login__marca p {
   max-width: 38ch;
-  color: #b9d3ca;
+  color: var(--tinta-suave);
   font-size: 17px;
 }
 
@@ -60,6 +61,10 @@
 }
 
 @media (max-width: 800px) {
+  .login__marca {
+    border-right: 0;
+    border-bottom: 1px solid var(--linha);
+  }
   .login {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;

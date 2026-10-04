@@ -9,7 +9,7 @@
   gap: 2px 12px;
   padding: 14px 16px;
   border-radius: 12px;
-  background: var(--papel);
+  background: var(--fundo-suave);
 }
 .confirmar-modal__resumo .numero {
   font-size: 20px;

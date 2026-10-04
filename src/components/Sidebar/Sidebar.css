@@ -6,8 +6,9 @@
   flex-direction: column;
   width: 260px;
   padding: 24px 16px;
-  background: var(--verde-escuro);
-  color: #e9f3ef;
+  border-right: 1px solid var(--linha);
+  background: var(--lateral);
+  color: var(--tinta);
 }
 
 .sidebar__marca {
@@ -22,8 +23,8 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #f1d9a0;
-  color: var(--verde-escuro);
+  background: var(--destaque);
+  color: var(--sobre-destaque);
   font-family: var(--fonte-titulo);
   font-weight: 700;
   font-size: 20px;
@@ -46,18 +47,18 @@
   min-height: 46px;
   padding: 0 14px;
   border-radius: 10px;
-  color: #b9d3ca;
+  color: var(--tinta-suave);
   font-weight: 500;
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
 }
 .sidebar__link:hover {
-  background: rgba(255, 255, 255, 0.07);
-  color: #fff;
+  background: var(--fundo-suave);
+  color: var(--tinta);
 }
 .sidebar__link.active {
-  background: #f5f6f3;
-  color: var(--verde-escuro);
+  background: var(--elevado);
+  color: var(--tinta);
   font-weight: 600;
 }
 .sidebar__rotulo-curto {
@@ -67,13 +68,13 @@
 .sidebar__rodape {
   margin-top: auto;
   padding: 16px 8px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  border-top: 1px solid var(--linha);
 }
 .sidebar__email {
   margin-bottom: 8px;
   overflow: hidden;
   font-size: 13px;
-  color: #9fc0b5;
+  color: var(--tinta-suave);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -84,12 +85,12 @@
   padding: 8px 0;
   border: 0;
   background: none;
-  color: #e9f3ef;
+  color: var(--tinta-suave);
   font-weight: 500;
   cursor: pointer;
 }
 .sidebar__sair:hover {
-  color: #fff;
+  color: var(--tinta);
   text-decoration: underline;
 }
 
@@ -100,7 +101,9 @@
     flex-direction: row;
     width: 100%;
     padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
-    box-shadow: 0 -4px 20px rgba(20, 34, 30, 0.18);
+    border-top: 1px solid var(--linha);
+    border-right: 0;
+    box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.6);
   }
   .sidebar__marca,
   .sidebar__email {

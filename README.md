@@ -1,6 +1,6 @@
 # Minhas Finanças
 
-Dashboard responsivo (React + Vite) para controlar as contas mês a mês, com login por senha e banco no Supabase.
+Dashboard responsivo (React + Vite), em preto e cinza, para controlar as contas mês a mês, com login por senha e banco no Supabase.
 
 ## Abas
 
@@ -11,6 +11,9 @@ Dashboard responsivo (React + Vite) para controlar as contas mês a mês, com lo
   - *Compras parceladas*: valor da parcela, nº de parcelas e data da 1ª; uma parcela entra em cada mês.
 - **Forma de pagamento** — cada gasto é *débito* (já entra como pago), *crédito* (vai para a fatura do cartão)
   ou *pagar manualmente* (boleto, Pix, conta). Parcelados aceitam crédito ou manual.
+- **Fatura do cartão** — o ciclo é configurável (padrão: fecha dia 20, vence dia 27; ajuste em "Ajustar cartão").
+  No crédito você informa a *data da compra* e o app descobre em qual fatura ela cai: compras até o dia do
+  fechamento entram na fatura daquele mês, as seguintes na do mês seguinte. Parcelas caem uma por fatura.
 - **Confirmar pagamento** — marca a conta como paga com a data do pagamento e o banco usado (e permite desfazer).
 
 ## Como rodar
@@ -18,7 +21,7 @@ Dashboard responsivo (React + Vite) para controlar as contas mês a mês, com lo
 1. `npm install`
 2. No Supabase, abra **SQL Editor** e rode `supabase/schema.sql` (instalação nova) ou, se já tinha rodado a
    versão anterior, rode nesta ordem `supabase/migracao-tipos-de-gasto.sql` e
-   `supabase/migracao-forma-pagamento.sql`.
+   `supabase/migracao-forma-pagamento.sql` e `supabase/migracao-fatura-cartao.sql`.
 3. Em **Authentication → Users**, crie o seu usuário (e-mail + senha). Desative o cadastro público em
    **Authentication → Providers → Email → Allow new users to sign up** para ninguém mais criar conta.
 4. Copie `.env.example` para `.env` e preencha `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`

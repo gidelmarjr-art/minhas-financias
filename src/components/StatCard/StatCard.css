@@ -25,7 +25,7 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: var(--papel);
+  background: var(--fundo-suave);
   color: var(--tinta-suave);
 }
 .stat-card__valor {
@@ -38,11 +38,11 @@
 }
 
 .stat-card--positivo .stat-card__icone {
-  background: var(--verde-claro);
-  color: var(--verde);
+  background: var(--positivo-suave);
+  color: var(--positivo);
 }
 .stat-card--positivo .stat-card__valor {
-  color: var(--verde);
+  color: var(--positivo);
 }
 .stat-card--alerta .stat-card__icone {
   background: var(--ambar-claro);

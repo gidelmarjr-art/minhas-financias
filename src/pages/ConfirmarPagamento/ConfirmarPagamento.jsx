@@ -8,7 +8,16 @@ import { useToast } from '../../components/Toast/Toast';
 import { useMes } from '../../contexts/MesContext';
 import { useGastos } from '../../hooks/useGastos';
 import * as gastosService from '../../services/gastosService';
-import { dataCurta, moeda, rotuloMes, rotuloTipo, statusDoGasto, textoPrazo } from '../../lib/format';
+import { useCartao } from '../../contexts/CartaoContext';
+import {
+  dataCurta,
+  dataDoMes,
+  moeda,
+  periodoDaFatura,
+  rotuloTipo,
+  statusDoGasto,
+  textoPrazo,
+} from '../../lib/format';
 import './ConfirmarPagamento.css';
 
 const soma = (lista) => lista.reduce((total, g) => total + Number(g.valor), 0);
@@ -22,6 +31,7 @@ function detalhePago(g) {
 
 export default function ConfirmarPagamento() {
   const { mes } = useMes();
+  const { cartao, abrirConfig } = useCartao();
   const { avisar } = useToast();
   const { gastos, carregando, erro, recarregar } = useGastos(mes);
   const [aba, setAba] = useState('pendentes');
@@ -44,6 +54,8 @@ export default function ConfirmarPagamento() {
   const totalManuais = soma(manuais);
   const totalPago = soma(pagos);
   const qtdPendentes = fatura.length + manuais.length;
+  const periodo = periodoDaFatura(mes, cartao);
+  const vencimentoFatura = dataDoMes(mes, cartao.dia_vencimento);
 
   async function confirmarUma(dados) {
     await gastosService.confirmarPagamento(selecionado.id, dados);
@@ -129,7 +141,14 @@ export default function ConfirmarPagamento() {
                 <div className="pagamentos__fatura-texto">
                   <h2>Cartão de crédito</h2>
                   <p>
-                    {plural(fatura.length, 'compra', 'compras')} na fatura de {rotuloMes(mes)}
+                    {plural(fatura.length, 'compra', 'compras')} · compras de {dataCurta(periodo.inicio)} a{' '}
+                    {dataCurta(periodo.fim)}
+                  </p>
+                  <p>
+                    Vence em {dataCurta(vencimentoFatura)} ·{' '}
+                    <button type="button" className="pagamentos__link" onClick={abrirConfig}>
+                      ajustar cartão
+                    </button>
                   </p>
                 </div>
                 <div className="pagamentos__fatura-total">
@@ -152,7 +171,7 @@ export default function ConfirmarPagamento() {
                       <div className="pagamentos__info">
                         <strong>{g.nome}</strong>
                         <small>
-                          {rotuloTipo(g)} · {dataCurta(g.data_pagamento)}
+                          {rotuloTipo(g)} · Compra em {dataCurta(g.data_compra ?? g.data_pagamento)}
                         </small>
                       </div>
                       <span className="numero pagamentos__valor">{moeda(g.valor)}</span>
@@ -254,7 +273,7 @@ export default function ConfirmarPagamento() {
         resumo={{
           titulo: 'Fatura do cartão de crédito',
           valor: moeda(totalFatura),
-          detalhe: `${plural(fatura.length, 'compra será marcada', 'compras serão marcadas')} como paga${fatura.length === 1 ? '' : 's'}`,
+          detalhe: `Compras de ${dataCurta(periodo.inicio)} a ${dataCurta(periodo.fim)} · ${plural(fatura.length, 'compra será marcada', 'compras serão marcadas')} como paga${fatura.length === 1 ? '' : 's'}`,
         }}
         onFechar={() => setPagandoFatura(false)}
         onConfirmar={pagarFatura}

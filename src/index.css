@@ -1,17 +1,34 @@
 :root {
-  --papel: #f5f6f3;
-  --superficie: #ffffff;
-  --tinta: #14221e;
-  --tinta-suave: #5b6b66;
-  --linha: #e1e6e2;
-  --verde: #0e6b58;
-  --verde-escuro: #0a4a3d;
-  --verde-claro: #e3f1ec;
-  --ambar: #8f5d0e;
-  --ambar-claro: #fbf0d9;
-  --vermelho: #b3412e;
-  --vermelho-claro: #f8e4df;
-  --sombra: 0 1px 2px rgba(20, 34, 30, 0.06), 0 10px 28px -14px rgba(20, 34, 30, 0.16);
+  color-scheme: dark;
+
+  /* Superfícies: do mais escuro (menu lateral) ao mais claro (item em destaque) */
+  --lateral: #070708;
+  --fundo: #0b0b0c;
+  --superficie: #151517;
+  --fundo-suave: #1f1f22;
+  --elevado: #29292d;
+
+  /* Texto e linhas */
+  --tinta: #ececee;
+  --tinta-suave: #9a9aa2;
+  --linha: #2a2a2e;
+  --linha-forte: #3f3f45;
+
+  /* Destaque neutro (botões principais, aba ativa, barra de progresso) */
+  --destaque: #f1f1f2;
+  --destaque-forte: #d2d2d6;
+  --destaque-suave: #29292d;
+  --sobre-destaque: #0b0b0c;
+
+  /* Cores de situação: as únicas fora do preto e cinza, para não perder o sentido */
+  --positivo: #7fd3a4;
+  --positivo-suave: #15271d;
+  --ambar: #e3b45f;
+  --ambar-claro: #2b2314;
+  --vermelho: #f0857a;
+  --vermelho-claro: #2d1a18;
+
+  --sombra: 0 1px 2px rgba(0, 0, 0, 0.5), 0 14px 32px -18px rgba(0, 0, 0, 0.8);
   --fonte-titulo: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
   --fonte-corpo: 'Figtree', 'Segoe UI', system-ui, sans-serif;
   --raio-painel: 16px;
@@ -32,7 +49,7 @@ body,
 
 body {
   margin: 0;
-  background: var(--papel);
+  background: var(--fundo);
   color: var(--tinta);
   font-family: var(--fonte-corpo);
   font-size: 15px;
@@ -67,7 +84,7 @@ select {
 }
 
 :focus-visible {
-  outline: 3px solid rgba(14, 107, 88, 0.45);
+  outline: 3px solid rgba(255, 255, 255, 0.55);
   outline-offset: 2px;
 }
 
@@ -103,11 +120,11 @@ select {
   cursor: not-allowed;
 }
 .btn--primario {
-  background: var(--verde);
-  color: #fff;
+  background: var(--destaque);
+  color: var(--sobre-destaque);
 }
 .btn--primario:hover:not(:disabled) {
-  background: var(--verde-escuro);
+  background: var(--destaque-forte);
 }
 .btn--secundario {
   border-color: var(--linha);
@@ -149,14 +166,14 @@ select {
 .campo select {
   min-height: 44px;
   padding: 0 14px;
-  border: 1px solid var(--linha);
+  border: 1px solid var(--linha-forte);
   border-radius: var(--raio-campo);
-  background: var(--superficie);
+  background: var(--fundo);
 }
 .campo input:focus,
 .campo select:focus {
-  border-color: var(--verde);
-  outline: 3px solid rgba(14, 107, 88, 0.2);
+  border-color: var(--destaque);
+  outline: 3px solid rgba(255, 255, 255, 0.16);
   outline-offset: 0;
 }
 

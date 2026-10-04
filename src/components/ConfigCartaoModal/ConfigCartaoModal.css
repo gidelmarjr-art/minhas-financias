@@ -1,0 +1,35 @@
+.config-cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.config-cartao__texto,
+.config-cartao__nota {
+  color: var(--tinta-suave);
+  font-size: 14px;
+}
+.config-cartao__campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.config-cartao__exemplo {
+  padding: 10px 14px;
+  border-radius: var(--raio-campo);
+  background: var(--destaque-suave);
+  color: var(--destaque-forte);
+  font-size: 14px;
+}
+.config-cartao__acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.config-cartao__acoes .btn {
+  flex: 1;
+}
+@media (min-width: 601px) {
+  .config-cartao__acoes .btn {
+    flex: 0 0 auto;
+  }
+}

@@ -25,6 +25,16 @@ function Etiquetas({ gasto, mostrarTipo, mostrarForma }) {
 }
 
 function Detalhe({ gasto }) {
+  if (gasto.forma_pagamento === 'credito' && gasto.data_compra) {
+    return (
+      <small>
+        Compra em {dataCurta(gasto.data_compra)} ·{' '}
+        {gasto.pago
+          ? `Fatura paga em ${dataCurta(gasto.data_pago)} · ${gasto.banco}`
+          : `Fatura vence ${dataCurta(gasto.data_pagamento)} · ${textoPrazo(gasto.data_pagamento)}`}
+      </small>
+    );
+  }
   if (gasto.forma_pagamento === 'debito' && gasto.pago) {
     return (
       <small>

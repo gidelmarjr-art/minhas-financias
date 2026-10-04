@@ -1,7 +1,16 @@
 import { useEffect, useState } from 'react';
 import SeletorBanco from '../SeletorBanco/SeletorBanco';
 import SeletorForma from '../SeletorForma/SeletorForma';
-import { dataMaisMeses, dataPadrao, moeda, parseValor, rotuloMes } from '../../lib/format';
+import { useCartao } from '../../contexts/CartaoContext';
+import {
+  dataCurta,
+  dataMaisMeses,
+  dataPadrao,
+  moeda,
+  parseValor,
+  rotuloMes,
+  vencimentoDaFatura,
+} from '../../lib/format';
 import './GastoForm.css';
 
 const FORMAS_PERMITIDAS = {
@@ -28,6 +37,7 @@ function diaInicial(gasto, mes) {
  *  - parcelado (editando):   { nome, valor, data_pagamento }
  */
 export default function GastoForm({ tipo, gasto, mes, onSalvar, onCancelar }) {
+  const { cartao, abrirConfig } = useCartao();
   const [nome, setNome] = useState('');
   const [valor, setValor] = useState('');
   const [data, setData] = useState('');
@@ -45,7 +55,7 @@ export default function GastoForm({ tipo, gasto, mes, onSalvar, onCancelar }) {
   useEffect(() => {
     setNome(gasto?.nome ?? '');
     setValor(gasto ? String(gasto.valor).replace('.', ',') : '');
-    setData(gasto?.data_pagamento ?? dataPadrao(mes));
+    setData(gasto?.data_compra ?? gasto?.data_pagamento ?? dataPadrao(mes));
     setDia(diaInicial(gasto, mes));
     setParcelas('');
     setForma(gasto?.forma_pagamento ?? FORMA_PADRAO[tipo]);
@@ -55,12 +65,24 @@ export default function GastoForm({ tipo, gasto, mes, onSalvar, onCancelar }) {
 
   const valorNumerico = parseValor(valor);
   const qtd = Number(parcelas);
+  const noCredito = forma === 'credito';
+  const vencimento = noCredito && data ? vencimentoDaFatura(data, cartao) : '';
   const previa =
     novoParcelado && valorNumerico > 0 && Number.isInteger(qtd) && qtd >= 2 && data
-      ? `${qtd}x de ${moeda(valorNumerico)} = ${moeda(valorNumerico * qtd)}. Última parcela em ${rotuloMes(
-          dataMaisMeses(data, qtd - 1).slice(0, 7),
-        )}.`
+      ? `${qtd}x de ${moeda(valorNumerico)} = ${moeda(valorNumerico * qtd)}. Última parcela ${
+          noCredito ? 'na fatura de' : 'em'
+        } ${rotuloMes(dataMaisMeses(noCredito ? vencimento : data, qtd - 1).slice(0, 7))}.`
       : '';
+
+  let textoFatura = '';
+  if (noCredito) {
+    const ciclo = `fecha dia ${cartao.dia_fechamento}, vence dia ${cartao.dia_vencimento}`;
+    if (tipo === 'fixo') textoFatura = `Entra uma vez em cada fatura do cartão (${ciclo}).`;
+    else if (vencimento) {
+      textoFatura = `${novoParcelado ? 'A 1ª parcela entra' : 'Esta compra entra'} na fatura que vence em ${dataCurta(vencimento)} (${ciclo}).`;
+    }
+    if (textoFatura && !cartao.salvo) textoFatura += ' Confira se esses dias são os do seu cartão.';
+  }
 
   async function aoEnviar(e) {
     e.preventDefault();
@@ -111,12 +133,11 @@ export default function GastoForm({ tipo, gasto, mes, onSalvar, onCancelar }) {
     }
   }
 
-  const rotuloData = novoParcelado
-    ? 'Data da 1ª parcela'
-    : forma === 'debito'
+  const rotuloData =
+    forma === 'debito' || forma === 'credito'
       ? 'Data da compra'
-      : forma === 'credito'
-        ? 'Vence na fatura em'
+      : novoParcelado
+        ? 'Data da 1ª parcela'
         : 'Data de pagamento';
 
   const textoBotao = salvando
@@ -170,7 +191,7 @@ export default function GastoForm({ tipo, gasto, mes, onSalvar, onCancelar }) {
 
       {tipo === 'fixo' ? (
         <label className="campo">
-          <span>Dia do vencimento</span>
+          <span>{noCredito ? 'Dia da cobrança no cartão' : 'Dia do vencimento'}</span>
           <input
             type="number"
             min="1"
@@ -200,6 +221,15 @@ export default function GastoForm({ tipo, gasto, mes, onSalvar, onCancelar }) {
           </p>
         )}
       </div>
+
+      {textoFatura && (
+        <div className="gasto-form__fatura">
+          <p>{textoFatura}</p>
+          <button type="button" className="gasto-form__link" onClick={abrirConfig}>
+            Ajustar cartão
+          </button>
+        </div>
+      )}
 
       {formaEditavel && forma === 'debito' && (
         <div className="gasto-form__banco">

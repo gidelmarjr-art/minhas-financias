@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useCartao } from '../contexts/CartaoContext';
 import * as gastosService from '../services/gastosService';
 
 function useCarregar(buscar) {
@@ -26,13 +27,18 @@ function useCarregar(buscar) {
 }
 
 export function useGastos(mes) {
-  const buscar = useCallback(() => gastosService.listarPorMes(mes), [mes]);
+  const { versao } = useCartao();
+  // `versao` muda quando o cartão é reajustado: recarrega as contas.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const buscar = useCallback(() => gastosService.listarPorMes(mes), [mes, versao]);
   const { dados, ...resto } = useCarregar(buscar);
   return { gastos: dados, ...resto };
 }
 
 export function useProximosPagamentos() {
-  const buscar = useCallback(() => gastosService.listarProximos(6), []);
+  const { versao } = useCartao();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const buscar = useCallback(() => gastosService.listarProximos(6), [versao]);
   const { dados, ...resto } = useCarregar(buscar);
   return { proximos: dados, ...resto };
 }

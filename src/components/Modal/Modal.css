@@ -5,7 +5,7 @@
   display: grid;
   place-items: center;
   padding: 16px;
-  background: rgba(20, 34, 30, 0.5);
+  background: rgba(0, 0, 0, 0.7);
 }
 .modal {
   width: 100%;
@@ -15,7 +15,8 @@
   padding: 24px;
   border-radius: 18px;
   background: var(--superficie);
-  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--linha);
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.9);
   animation: modal-entrada 0.18s ease-out;
 }
 .modal__cabecalho {
@@ -39,7 +40,7 @@
   cursor: pointer;
 }
 .modal__fechar:hover {
-  background: var(--papel);
+  background: var(--fundo-suave);
 }
 
 @keyframes modal-entrada {

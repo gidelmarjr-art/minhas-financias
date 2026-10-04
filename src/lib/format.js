@@ -115,3 +115,48 @@ export const FORMAS_PAGAMENTO = {
   credito: 'Crédito',
   manual: 'Pagar manualmente',
 };
+
+/* ---------- Fatura do cartão de crédito ---------- */
+
+/** Valores provisórios até o usuário ajustar o cartão. */
+export const CARTAO_PADRAO = { dia_fechamento: 20, dia_vencimento: 27 };
+
+export const dataDiaMes = (iso) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;
+
+export function somarDias(iso, n) {
+  const [ano, m, dia] = iso.split('-').map(Number);
+  return paraISO(new Date(ano, m - 1, dia + n));
+}
+
+/**
+ * Mês "AAAA-MM" em que vence a fatura que recebe uma compra feita em `iso`.
+ * A compra feita até o dia do fechamento (inclusive) entra na fatura que fecha neste mês;
+ * depois disso, entra na que fecha no mês seguinte. Se o vencimento é num dia menor ou
+ * igual ao fechamento, a fatura vence no mês depois do fechamento.
+ */
+export function mesDaFatura(iso, cartao) {
+  const mesCompra = iso.slice(0, 7);
+  const dia = Number(iso.slice(8, 10));
+  const mesFechamento = dia <= cartao.dia_fechamento ? mesCompra : deslocarMes(mesCompra, 1);
+  return cartao.dia_vencimento > cartao.dia_fechamento ? mesFechamento : deslocarMes(mesFechamento, 1);
+}
+
+export function vencimentoDaFatura(iso, cartao) {
+  return dataDoMes(mesDaFatura(iso, cartao), cartao.dia_vencimento);
+}
+
+/** Período de compras da fatura que vence no mês "AAAA-MM": do dia seguinte ao fechamento anterior até o fechamento. */
+export function periodoDaFatura(mesVencimento, cartao) {
+  const mesFechamento =
+    cartao.dia_vencimento > cartao.dia_fechamento ? mesVencimento : deslocarMes(mesVencimento, -1);
+  return {
+    inicio: somarDias(dataDoMes(deslocarMes(mesFechamento, -1), cartao.dia_fechamento), 1),
+    fim: dataDoMes(mesFechamento, cartao.dia_fechamento),
+  };
+}
+
+/** Data de um dia fixo do mês (ex.: cobrança dia 25) dentro do período de uma fatura. */
+export function dataNoPeriodo({ inicio, fim }, dia) {
+  const candidatas = [dataDoMes(inicio.slice(0, 7), dia), dataDoMes(fim.slice(0, 7), dia)];
+  return candidatas.find((c) => c >= inicio && c <= fim) ?? fim;
+}

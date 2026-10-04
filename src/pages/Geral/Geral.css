@@ -30,19 +30,19 @@
 .geral__progresso-texto .numero {
   font-size: 20px;
   font-weight: 700;
-  color: var(--verde);
+  color: var(--tinta);
 }
 .geral__barra {
   height: 10px;
   overflow: hidden;
   border-radius: 999px;
-  background: var(--papel);
+  background: var(--fundo-suave);
 }
 .geral__barra span {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: var(--verde);
+  background: var(--destaque);
   transition: width 0.4s ease;
 }
 
@@ -66,7 +66,7 @@
   font-size: 18px;
 }
 .geral__link {
-  color: var(--verde);
+  color: var(--destaque);
   font-size: 14px;
   font-weight: 600;
 }
@@ -102,7 +102,7 @@
   text-align: right;
 }
 .geral__item-valor--entrada {
-  color: var(--verde);
+  color: var(--positivo);
 }
 
 .geral__form {
@@ -183,12 +183,12 @@
 }
 .geral__tabela-total th,
 .geral__tabela-total td {
-  border-top: 2px solid var(--tinta);
+  border-top: 2px solid var(--linha-forte);
   font-weight: 700;
 }
 .geral__tabela-entrada th,
 .geral__tabela-entrada td {
-  color: var(--verde);
+  color: var(--positivo);
   font-weight: 700;
 }
 .geral__sub {
@@ -210,8 +210,8 @@
 }
 .geral__tabela-saldo th,
 .geral__tabela-saldo td {
-  border-top: 2px solid var(--tinta);
-  color: var(--verde);
+  border-top: 2px solid var(--linha-forte);
+  color: var(--positivo);
   font-weight: 700;
 }
 .geral__tabela-saldo--negativo th,
