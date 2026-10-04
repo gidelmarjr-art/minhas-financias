@@ -5,10 +5,10 @@ import './Sidebar.css';
 
 const ITENS = [
   { to: '/geral', rotulo: 'Geral', curto: 'Geral', icone: LayoutDashboard },
-  { to: '/gastos', rotulo: 'Cadastro de gastos', curto: 'Gastos', icone: ReceiptText },
-  { to: '/pagamentos', rotulo: 'Confirmar pagamento', curto: 'Pagamentos', icone: BadgeCheck },
-  { to: '/previsao-gastos', rotulo: 'Previsão de gastos', curto: 'Previsão', icone: CalendarClock },
-  { to: '/gastos-passados', rotulo: 'Gastos passados', curto: 'Histórico', icone: ChartNoAxesCombined },
+  { to: '/gastos', rotulo: 'Cadastro de Gastos', curto: 'Gastos', icone: ReceiptText },
+  { to: '/pagamentos', rotulo: 'Confirmar Pagamento', curto: 'Pagamentos', icone: BadgeCheck },
+  { to: '/previsao-gastos', rotulo: 'Previsão de Gastos', curto: 'Previsão', icone: CalendarClock },
+  { to: '/gastos-passados', rotulo: 'Gastos Passados', curto: 'Histórico', icone: ChartNoAxesCombined },
 ];
 
 export default function Sidebar() {

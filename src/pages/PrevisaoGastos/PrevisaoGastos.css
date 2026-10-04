@@ -3,7 +3,7 @@
 .previsao-resumo-geral__rotulo, .previsao-resumo-geral small, .previsao-qtd { color: var(--tinta-suave); }
 .previsao-resumo-geral__rotulo { display: block; font-size: 15px; }
 .valor-destaque { margin: 4px 0; color: var(--tinta); font-family: var(--fonte-titulo); font-size: clamp(30px, 4vw, 38px); font-weight: 700; }
-.previsao-grid, .previsao-listas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.previsao-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 .previsao-card { display: flex; flex-direction: column; gap: 10px; padding: 20px; }
 .previsao-header { display: flex; align-items: center; gap: 9px; }
 .previsao-header svg { color: var(--ambar); }
@@ -11,4 +11,7 @@
 .previsao-valor { margin: 0; font-size: 24px; font-weight: 700; }
 .previsao-qtd { font-size: 13px; }
 .previsao-vazio { padding: 8px; }
-@media (max-width: 800px) { .previsao-grid, .previsao-listas { grid-template-columns: 1fr; } }
+.previsao-detalhes { margin-top: 4px; }
+.previsao-detalhes .abas { margin-bottom: 12px; }
+@media (max-width: 1000px) { .previsao-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .previsao-grid { grid-template-columns: 1fr; } }
