@@ -9,6 +9,8 @@ import Login from './pages/Login/Login';
 import Geral from './pages/Geral/Geral';
 import CadastroGastos from './pages/CadastroGastos/CadastroGastos';
 import ConfirmarPagamento from './pages/ConfirmarPagamento/ConfirmarPagamento';
+import PrevisaoGastos from './pages/PrevisaoGastos/PrevisaoGastos';
+import GastosPassados from './pages/GastosPassados/GastosPassados'; 
 
 export default function App() {
   return (
@@ -24,6 +26,8 @@ export default function App() {
                   <Route path="/geral" element={<Geral />} />
                   <Route path="/gastos" element={<CadastroGastos />} />
                   <Route path="/pagamentos" element={<ConfirmarPagamento />} />
+                  <Route path="/previsao-gastos" element={<PrevisaoGastos />} />
+                  <Route path="/gastos-passados" element={<GastosPassados />} />
                 </Route>
               </Route>
               <Route path="*" element={<Navigate to="/geral" replace />} />

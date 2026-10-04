@@ -1,0 +1,22 @@
+.gastos-passados {
+  padding-bottom: 32px;
+}
+
+.form-passados {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 500px;
+  margin-top: 16px;
+}
+
+.form-passados .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-passados label {
+  font-weight: 500;
+  font-size: 14px;
+}

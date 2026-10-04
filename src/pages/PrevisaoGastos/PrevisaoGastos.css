@@ -1,0 +1,57 @@
+.previsao-gastos {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 32px;
+}
+
+.previsao-resumo-geral {
+  text-align: center;
+  padding: 24px;
+}
+
+.previsao-resumo-geral h3 {
+  font-size: 16px;
+  color: var(--tinta-suave);
+  margin-bottom: 8px;
+}
+
+.valor-destaque {
+  font-size: 32px;
+  font-weight: bold;
+  color: var(--cor-primaria, #2563eb);
+}
+
+.previsao-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.previsao-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+}
+
+.previsao-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.previsao-header h4 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.previsao-valor {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.previsao-qtd {
+  font-size: 13px;
+  color: var(--tinta-suave);
+}
