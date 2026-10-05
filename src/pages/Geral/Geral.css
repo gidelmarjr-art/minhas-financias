@@ -1,6 +1,8 @@
 .geral__erro {
   margin-bottom: 16px;
 }
+.geral__seletor-usuario { display: flex; align-items: center; gap: 8px; color: var(--tinta-suave); font-size: 13px; font-weight: 600; }
+.geral__seletor-usuario select { min-height: 38px; padding: 0 30px 0 10px; border: 1px solid var(--linha); border-radius: 9px; background: var(--superficie); }
 
 .geral__cards {
   display: grid;

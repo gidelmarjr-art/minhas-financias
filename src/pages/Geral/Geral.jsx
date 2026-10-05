@@ -12,6 +12,7 @@ import { useGastos, useProximosPagamentos } from '../../hooks/useGastos';
 import { useEntradas } from '../../hooks/useEntradas';
 import { useHistoricoFinanceiro } from '../../hooks/useHistoricoFinanceiro';
 import { useCartao } from '../../contexts/CartaoContext';
+import { usePerfil } from '../../contexts/PerfilContext';
 import * as entradasService from '../../services/entradasService';
 import {
   dataCurta,
@@ -38,10 +39,11 @@ export default function Geral() {
   const { mes } = useMes();
   const { cartao } = useCartao();
   const { avisar } = useToast();
-  const { gastos, carregando: carregandoGastos, erro: erroGastos } = useGastos(mes);
-  const { entradas, carregando: carregandoEntradas, erro: erroEntradas, recarregar } = useEntradas(mes);
-  const { proximos, erro: erroProximos } = useProximosPagamentos();
-  const { meses: historico, carregando: carregandoHistorico, erro: erroHistorico, recarregar: recarregarHistorico } = useHistoricoFinanceiro(mes);
+  const { isAdmin, usuarios, alvoAdmin, setAlvoAdmin, userIdVisualizado } = usePerfil();
+  const { gastos, carregando: carregandoGastos, erro: erroGastos } = useGastos(mes, userIdVisualizado, isAdmin);
+  const { entradas, carregando: carregandoEntradas, erro: erroEntradas, recarregar } = useEntradas(mes, userIdVisualizado);
+  const { proximos, erro: erroProximos } = useProximosPagamentos(userIdVisualizado, isAdmin);
+  const { meses: historico, carregando: carregandoHistorico, erro: erroHistorico, recarregar: recarregarHistorico } = useHistoricoFinanceiro(mes, userIdVisualizado);
 
   const [modalAberto, setModalAberto] = useState(false);
   const [descricao, setDescricao] = useState('');
@@ -135,7 +137,17 @@ export default function Geral() {
 
   return (
     <div className="geral">
-      <PageHeader titulo="Geral" descricao="Tudo do seu mês, em detalhe." />
+      <PageHeader titulo={isAdmin ? 'Visão administrativa' : 'Geral'} descricao={isAdmin ? 'Consulta em modo somente leitura.' : 'Tudo do seu mês, em detalhe.'}>
+        {isAdmin && (
+          <label className="geral__seletor-usuario">
+            <span>Visualizar</span>
+            <select value={alvoAdmin} onChange={(event) => setAlvoAdmin(event.target.value)}>
+              <option value="todos">Usuário G e T</option>
+              {usuarios.map((usuario) => <option value={usuario.id} key={usuario.id}>{usuario.nome || (usuario.papel === 'usuario_g' ? 'Usuário G' : 'Usuário T')}</option>)}
+            </select>
+          </label>
+        )}
+      </PageHeader>
 
       {erro && <p className="aviso-erro geral__erro">Não foi possível carregar os dados: {erro}</p>}
 
@@ -182,7 +194,9 @@ export default function Geral() {
           detalhe={
             credito.lista.length === 0
               ? 'Nenhuma compra no cartão'
-              : `${credito.aPagar > 0 ? `${moeda(credito.aPagar)} em aberto` : 'Fatura paga'} · ${dataDiaMes(periodo.inicio)} a ${dataDiaMes(periodo.fim)}`
+              : isAdmin
+                ? `${credito.aPagar > 0 ? `${moeda(credito.aPagar)} em aberto` : 'Faturas pagas'}`
+                : `${credito.aPagar > 0 ? `${moeda(credito.aPagar)} em aberto` : 'Fatura paga'} · ${dataDiaMes(periodo.inicio)} a ${dataDiaMes(periodo.fim)}`
           }
           tom={credito.aPagar > 0 ? 'alerta' : 'neutro'}
           icone={CreditCard}
@@ -219,7 +233,7 @@ export default function Geral() {
         <section className="painel geral__lista">
           <header className="geral__lista-topo">
             <h2>Próximos pagamentos</h2>
-            <Link to="/pagamentos" className="geral__link">Confirmar pagamento</Link>
+            {!isAdmin && <Link to="/pagamentos" className="geral__link">Confirmar pagamento</Link>}
           </header>
           {proximos.length === 0 ? (
             <EmptyState titulo="Nada a pagar" descricao="Todas as contas cadastradas estão pagas." />
@@ -245,19 +259,20 @@ export default function Geral() {
               <h2>Valores adicionados</h2>
               <p className="geral__sub">Dinheiro que entrou em {entradas.length === 1 ? '1 lançamento' : `${entradas.length} lançamentos`}</p>
             </div>
-            <button type="button" className="btn btn--secundario btn--pequeno" onClick={abrirModal}>
+            {!isAdmin && <button type="button" className="btn btn--secundario btn--pequeno" onClick={abrirModal}>
               <Plus size={16} aria-hidden="true" />
               Registrar entrada
-            </button>
+            </button>}
           </header>
           {entradas.length === 0 ? (
             <EmptyState
               titulo="Nenhuma entrada neste mês"
               descricao="Registre salário, vendas ou qualquer dinheiro que entrou."
             >
+              {!isAdmin &&
               <button type="button" className="btn btn--primario btn--pequeno" onClick={abrirModal}>
                 Registrar entrada
-              </button>
+              </button>}
             </EmptyState>
           ) : (
             <ul>
@@ -270,14 +285,14 @@ export default function Geral() {
                   <span className="numero geral__item-valor geral__item-valor--entrada">
                     {moeda(e.valor)}
                   </span>
-                  <button
+                  {!isAdmin && <button
                     type="button"
                     className="btn btn--perigo btn--icone"
                     onClick={() => excluirEntrada(e)}
                     aria-label={`Excluir entrada ${e.descricao}`}
                   >
                     <Trash2 size={16} />
-                  </button>
+                  </button>}
                 </li>
               ))}
             </ul>
@@ -285,7 +300,7 @@ export default function Geral() {
         </section>
       </div>
 
-      <Modal aberto={modalAberto} titulo="Registrar entrada" onFechar={() => setModalAberto(false)}>
+      {!isAdmin && <Modal aberto={modalAberto} titulo="Registrar entrada" onFechar={() => setModalAberto(false)}>
         <form className="geral__form" onSubmit={salvarEntrada} noValidate>
           <label className="campo">
             <span>Descrição</span>
@@ -314,7 +329,7 @@ export default function Geral() {
             {salvando ? 'Salvando…' : 'Registrar entrada'}
           </button>
         </form>
-      </Modal>
+      </Modal>}
     </div>
   );
 }

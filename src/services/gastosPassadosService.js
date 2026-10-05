@@ -7,8 +7,8 @@ function resolver({ data, error }) {
   return data;
 }
 
-export async function listar() {
-  return resolver(await supabase.from(TABELA).select('*').order('mes_referencia', { ascending: false }));
+export async function listar(userId) {
+  return resolver(await (userId ? supabase.from(TABELA).select('*').eq('user_id', userId) : supabase.from(TABELA).select('*')).order('mes_referencia', { ascending: false }));
 }
 
 /** Um registro por mês: salvar novamente atualiza o valor e a observação. */

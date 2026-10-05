@@ -32,6 +32,21 @@ Dashboard responsivo (React + Vite), em preto e cinza, para controlar as contas 
    (Project Settings → API).
 5. `npm run dev`
 
+## Multiusuário: UsuarioG, UsuarioT e Admin
+
+1. No **SQL Editor** do Supabase, execute `supabase/migracao-multiusuario.sql` uma única vez.
+   Todos os usuários que já existiam são mantidos e recebem o perfil `usuario_g`; seus dados não são alterados.
+2. Crie a conta do **UsuarioT** em **Authentication → Users**. O perfil dela é criado automaticamente como
+   `usuario_t`; ela enxerga e altera somente os próprios dados.
+3. Para tornar uma conta **Admin**, execute no SQL Editor (troque pelo e-mail da conta):
+   ```sql
+   update public.perfis
+   set papel = 'admin', nome = 'Admin'
+   where id = (select id from auth.users where email = 'admin@exemplo.com');
+   ```
+4. Entre com cada conta para testar. O Admin recebe apenas a tela **Geral**, com o seletor para UsuarioG,
+   UsuarioT ou ambos. Os botões e rotas de alteração são ocultos e o banco bloqueia escrita nos dados alheios.
+
 ## Estrutura
 
 ```

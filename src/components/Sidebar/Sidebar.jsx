@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { BadgeCheck, CalendarClock, ChartNoAxesCombined, LayoutDashboard, LogOut, Moon, ReceiptText, Sun } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { usePerfil } from '../../contexts/PerfilContext';
 import './Sidebar.css';
 
 const ITENS = [
@@ -14,6 +15,7 @@ const ITENS = [
 
 export default function Sidebar() {
   const { sair, sessao } = useAuth();
+  const { isAdmin } = usePerfil();
   const [temaClaro, setTemaClaro] = useState(() => localStorage.getItem('tema') === 'claro');
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="sidebar__nav" aria-label="Principal">
-        {ITENS.map(({ to, rotulo, curto, icone: Icone }) => (
+        {(isAdmin ? ITENS.filter((item) => item.to === '/geral') : ITENS).map(({ to, rotulo, curto, icone: Icone }) => (
           <NavLink key={to} to={to} className="sidebar__link">
             <Icone size={20} aria-hidden="true" />
             <span className="sidebar__rotulo-longo">{rotulo}</span>

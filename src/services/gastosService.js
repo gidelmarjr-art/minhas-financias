@@ -17,13 +17,14 @@ function resolver({ data, error }) {
   return data;
 }
 
-export async function listarPorMes(mes) {
-  await garantirFixosDoMes(mes);
+export async function listarPorMes(mes, userId, somenteLeitura = false) {
+  if (!somenteLeitura) await garantirFixosDoMes(mes);
   const { inicio, fim } = intervaloDoMes(mes);
   return resolver(
-    await supabase
+    await (userId ? supabase
       .from(TABELA)
       .select(CAMPOS)
+      .eq('user_id', userId) : supabase.from(TABELA).select(CAMPOS))
       .gte('data_pagamento', inicio)
       .lte('data_pagamento', fim)
       .order('data_pagamento', { ascending: true }),
@@ -31,24 +32,28 @@ export async function listarPorMes(mes) {
 }
 
 /** Gastos entre duas datas, usado no gráfico comparativo da visão Geral. */
-export async function listarPorPeriodo(inicio, fim) {
+export async function listarPorPeriodo(inicio, fim, userId) {
   return resolver(
-    await supabase
+    await (userId ? supabase
       .from(TABELA)
       .select('valor, data_pagamento')
+      .eq('user_id', userId) : supabase.from(TABELA).select('valor, data_pagamento'))
       .gte('data_pagamento', inicio)
       .lte('data_pagamento', fim),
   );
 }
 
 /** Contas não pagas, das mais antigas (atrasadas) às mais distantes. */
-export async function listarProximos(limite = 6) {
-  await garantirFixosDoMes(mesAtual());
-  await garantirFixosDoMes(deslocarMes(mesAtual(), 1));
+export async function listarProximos(limite = 6, userId, somenteLeitura = false) {
+  if (!somenteLeitura) {
+    await garantirFixosDoMes(mesAtual());
+    await garantirFixosDoMes(deslocarMes(mesAtual(), 1));
+  }
   return resolver(
-    await supabase
+    await (userId ? supabase
       .from(TABELA)
       .select(CAMPOS)
+      .eq('user_id', userId) : supabase.from(TABELA).select(CAMPOS))
       .eq('pago', false)
       .order('data_pagamento', { ascending: true })
       .limit(limite),

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import * as entradasService from '../services/entradasService';
 
-export function useEntradas(mes) {
+export function useEntradas(mes, userId) {
   const [entradas, setEntradas] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState('');
@@ -10,13 +10,13 @@ export function useEntradas(mes) {
     setCarregando(true);
     setErro('');
     try {
-      setEntradas(await entradasService.listarPorMes(mes));
+      setEntradas(await entradasService.listarPorMes(mes, userId));
     } catch (e) {
       setErro(e.message);
     } finally {
       setCarregando(false);
     }
-  }, [mes]);
+  }, [mes, userId]);
 
   useEffect(() => {
     recarregar();
