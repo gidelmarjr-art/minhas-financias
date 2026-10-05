@@ -5,7 +5,6 @@ import PageHeader from '../../components/PageHeader/PageHeader';
 import StatCard from '../../components/StatCard/StatCard';
 import StatusBadge from '../../components/StatusBadge/StatusBadge';
 import EmptyState from '../../components/EmptyState/EmptyState';
-import ListaGastos from '../../components/ListaGastos/ListaGastos';
 import Modal from '../../components/Modal/Modal';
 import { useToast } from '../../components/Toast/Toast';
 import { useMes } from '../../contexts/MesContext';
@@ -29,30 +28,6 @@ import './Geral.css';
 
 const soma = (lista) => lista.reduce((total, item) => total + Number(item.valor), 0);
 
-const TIPOS = [
-  {
-    id: 'fixo',
-    titulo: 'Gastos fixos',
-    descricao: 'Repetem todo mês',
-    vazio: 'Nenhum gasto fixo neste mês',
-    vazioDescricao: 'Cadastre em Cadastro de gastos → Gastos fixos.',
-  },
-  {
-    id: 'variavel',
-    titulo: 'Gastos variáveis',
-    descricao: 'Valem só para este mês',
-    vazio: 'Nenhum gasto variável neste mês',
-    vazioDescricao: 'Cadastre em Cadastro de gastos → Gastos variáveis.',
-  },
-  {
-    id: 'parcelado',
-    titulo: 'Compras parceladas',
-    descricao: 'Parcelas que vencem neste mês',
-    vazio: 'Nenhuma parcela neste mês',
-    vazioDescricao: 'Cadastre em Cadastro de gastos → Compras parceladas.',
-  },
-];
-
 const FORMAS = [
   { id: 'debito', titulo: 'Gastos no débito' },
   { id: 'credito', titulo: 'Gastos no crédito' },
@@ -75,7 +50,7 @@ export default function Geral() {
   const [erroForm, setErroForm] = useState('');
   const [salvando, setSalvando] = useState(false);
 
-  const { categorias, formas, resumo } = useMemo(() => {
+  const { formas, resumo } = useMemo(() => {
     const abertos = gastos.filter((g) => !g.pago);
     const pagos = gastos.filter((g) => g.pago);
     const entrou = soma(entradas);
@@ -87,10 +62,6 @@ export default function Geral() {
     };
 
     return {
-      categorias: TIPOS.map((tipo) => ({
-        ...tipo,
-        ...totais(gastos.filter((g) => g.tipo === tipo.id)),
-      })),
       formas: FORMAS.map((forma) => ({
         ...forma,
         ...totais(gastos.filter((g) => g.forma_pagamento === forma.id)),
@@ -160,9 +131,6 @@ export default function Geral() {
 
   const [debito, credito] = formas;
   const periodo = periodoDaFatura(mes, cartao);
-  const fixos = categorias[0];
-  const variaveis = categorias[1];
-  const parcelados = categorias[2];
   const maiorValorDoGrafico = Math.max(1, ...historico.flatMap((item) => [item.entradas, item.gastos]));
 
   return (
@@ -247,12 +215,11 @@ export default function Geral() {
         </div>
       </section>
 
-      <section className="painel geral__lista geral__pagamentos">
+      <div className="geral__colunas">
+        <section className="painel geral__lista">
           <header className="geral__lista-topo">
             <h2>Próximos pagamentos</h2>
-            <Link to="/pagamentos" className="geral__link">
-              Confirmar pagamento
-            </Link>
+            <Link to="/pagamentos" className="geral__link">Confirmar pagamento</Link>
           </header>
           {proximos.length === 0 ? (
             <EmptyState titulo="Nada a pagar" descricao="Todas as contas cadastradas estão pagas." />
@@ -262,9 +229,7 @@ export default function Geral() {
                 <li key={g.id} className="geral__item">
                   <div className="geral__item-info">
                     <strong>{g.nome}</strong>
-                    <small>
-                      {rotuloTipo(g)} · {dataCurta(g.data_pagamento)} · {textoPrazo(g.data_pagamento)}
-                    </small>
+                    <small>{rotuloTipo(g)} · {dataCurta(g.data_pagamento)} · {textoPrazo(g.data_pagamento)}</small>
                   </div>
                   <StatusBadge status={statusDoGasto(g)} />
                   <span className="numero geral__item-valor">{moeda(g.valor)}</span>
@@ -272,36 +237,7 @@ export default function Geral() {
               ))}
             </ul>
           )}
-      </section>
-
-      <div className="geral__colunas">
-        <ListaGastos
-          titulo={fixos.titulo}
-          descricao={fixos.descricao}
-          gastos={fixos.lista}
-          vazio={fixos.vazio}
-          vazioDescricao={fixos.vazioDescricao}
-          ocupado={carregandoGastos}
-        />
-        <ListaGastos
-          titulo={variaveis.titulo}
-          descricao={variaveis.descricao}
-          gastos={variaveis.lista}
-          vazio={variaveis.vazio}
-          vazioDescricao={variaveis.vazioDescricao}
-          ocupado={carregandoGastos}
-        />
-      </div>
-
-      <div className="geral__colunas">
-        <ListaGastos
-          titulo={parcelados.titulo}
-          descricao={parcelados.descricao}
-          gastos={parcelados.lista}
-          vazio={parcelados.vazio}
-          vazioDescricao={parcelados.vazioDescricao}
-          ocupado={carregandoGastos}
-        />
+        </section>
 
         <section className="painel geral__lista">
           <header className="geral__lista-topo">
@@ -347,19 +283,6 @@ export default function Geral() {
             </ul>
           )}
         </section>
-      </div>
-
-      <div className="geral__linha-unica">
-        <ListaGastos
-          titulo="Cartão de crédito"
-          descricao="Tudo que está no crédito neste mês: variáveis, parceladas e fixas"
-          gastos={credito.lista}
-          vazio="Nenhuma compra no crédito neste mês"
-          vazioDescricao="Ao cadastrar um gasto, escolha Crédito em Forma de pagamento."
-          ocupado={carregandoGastos}
-          mostrarTipo
-          mostrarForma={false}
-        />
       </div>
 
       <Modal aberto={modalAberto} titulo="Registrar entrada" onFechar={() => setModalAberto(false)}>
