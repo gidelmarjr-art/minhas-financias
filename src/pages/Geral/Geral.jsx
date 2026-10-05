@@ -142,8 +142,8 @@ export default function Geral() {
           <label className="geral__seletor-usuario">
             <span>Visualizar</span>
             <select value={alvoAdmin} onChange={(event) => setAlvoAdmin(event.target.value)}>
-              <option value="todos">Usuário G e T</option>
-              {usuarios.map((usuario) => <option value={usuario.id} key={usuario.id}>{usuario.nome || (usuario.papel === 'usuario_g' ? 'Usuário G' : 'Usuário T')}</option>)}
+              <option value="todos">Júnior e Thiago</option>
+              {usuarios.map((usuario) => <option value={usuario.id} key={usuario.id}>{usuario.papel === 'usuario_g' ? 'Júnior' : 'Thiago'}</option>)}
             </select>
           </label>
         )}

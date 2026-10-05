@@ -2,13 +2,13 @@
 -- 1. Perfis: todos os usuários existentes se tornam UsuarioG; novos entram como UsuarioT.
 create table if not exists public.perfis (
   id uuid primary key references auth.users(id) on delete cascade,
-  nome text not null default 'Usuário T',
+  nome text not null default 'Thiago',
   papel text not null default 'usuario_t' check (papel in ('usuario_g', 'usuario_t', 'admin')),
   created_at timestamptz not null default now()
 );
 
 insert into public.perfis (id, nome, papel)
-select id, coalesce(raw_user_meta_data->>'nome', email, 'Usuário G'), 'usuario_g'
+select id, coalesce(raw_user_meta_data->>'nome', 'Júnior'), 'usuario_g'
 from auth.users
 on conflict (id) do nothing;
 
@@ -16,7 +16,7 @@ create or replace function public.criar_perfil_usuario()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
   insert into public.perfis (id, nome, papel)
-  values (new.id, coalesce(new.raw_user_meta_data->>'nome', new.email, 'Usuário T'), 'usuario_t')
+  values (new.id, coalesce(new.raw_user_meta_data->>'nome', 'Thiago'), 'usuario_t')
   on conflict (id) do nothing;
   return new;
 end;

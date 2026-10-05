@@ -1,8 +1,11 @@
 .geral__erro {
   margin-bottom: 16px;
 }
-.geral__seletor-usuario { display: flex; align-items: center; gap: 8px; color: var(--tinta-suave); font-size: 13px; font-weight: 600; }
-.geral__seletor-usuario select { min-height: 38px; padding: 0 30px 0 10px; border: 1px solid var(--linha); border-radius: 9px; background: var(--superficie); }
+.geral__seletor-usuario { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 6px 8px 6px 14px; border: 1px solid var(--linha); border-radius: 12px; background: var(--superficie); box-shadow: var(--sombra); color: var(--tinta-suave); font-size: 13px; font-weight: 700; }
+.geral__seletor-usuario select { min-width: 142px; min-height: 36px; padding: 0 34px 0 11px; border: 1px solid var(--linha-forte); border-radius: 8px; background: var(--fundo); color: var(--tinta); font-weight: 700; cursor: pointer; }
+.geral__seletor-usuario select:hover { border-color: var(--tinta-suave); }
+.geral__seletor-usuario select:focus { border-color: var(--destaque); outline: 3px solid rgba(255,255,255,.14); outline-offset: 0; }
+@media (max-width: 480px) { .geral__seletor-usuario { width: 100%; justify-content: space-between; } }
 
 .geral__cards {
   display: grid;

@@ -15,13 +15,22 @@ const ITENS = [
 
 export default function Sidebar() {
   const { sair, sessao } = useAuth();
-  const { isAdmin } = usePerfil();
-  const [temaClaro, setTemaClaro] = useState(() => localStorage.getItem('tema') === 'claro');
+  const { isAdmin, perfil } = usePerfil();
+  const [temaClaro, setTemaClaro] = useState(false);
 
   useEffect(() => {
+    if (!perfil) return;
+    const chave = `tema:${perfil.id}`;
+    const salvo = localStorage.getItem(chave);
+    // Júnior inicia no escuro; Thiago e Admin, no claro. A preferência fica individual.
+    setTemaClaro(salvo ? salvo === 'claro' : perfil.papel !== 'usuario_g');
+  }, [perfil]);
+
+  useEffect(() => {
+    if (!perfil) return;
     document.documentElement.dataset.theme = temaClaro ? 'light' : 'dark';
-    localStorage.setItem('tema', temaClaro ? 'claro' : 'escuro');
-  }, [temaClaro]);
+    localStorage.setItem(`tema:${perfil.id}`, temaClaro ? 'claro' : 'escuro');
+  }, [temaClaro, perfil]);
 
   return (
     <aside className="sidebar">
