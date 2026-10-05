@@ -12,4 +12,7 @@
 .gastos-passados__item small { display: block; overflow: hidden; margin-top: 2px; color: var(--tinta-suave); text-overflow: ellipsis; white-space: nowrap; }
 .gastos-passados__item .numero { font-weight: 700; }
 @media (max-width: 800px) { .gastos-passados__grid { grid-template-columns: 1fr; } }
-@media (max-width: 480px) { .gastos-passados__item { grid-template-columns: minmax(0, 1fr) auto auto; } .gastos-passados__item .numero { grid-column: 1; } }
+@media (max-width: 480px) {
+  .gastos-passados__item { grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; }
+  .gastos-passados__item .numero { grid-column: 1; grid-row: 2; white-space: nowrap; }
+}

@@ -152,10 +152,19 @@
   .geral__grafico-topo { flex-direction: column; }
   .geral__barras { gap: 5px; height: 190px; padding-right: 0; padding-left: 0; }
   .geral__item {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 8px;
   }
+  .geral__item-info { grid-column: 1; min-width: 0; }
   .geral__item-valor {
     min-width: 0;
+    grid-column: 2;
+    white-space: nowrap;
+  }
+  .geral__item .btn--icone {
+    grid-column: 3;
   }
 }
 
