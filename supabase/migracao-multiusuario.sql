@@ -44,6 +44,18 @@ drop policy if exists "entradas: dono tem acesso total" on public.entradas;
 drop policy if exists "config_cartao: dono tem acesso total" on public.config_cartao;
 drop policy if exists "gastos_passados: dono tem acesso total" on public.gastos_passados;
 
+-- Também remove políticas criadas por uma execução anterior incompleta desta migração.
+drop policy if exists "gastos_fixos: leitura dono ou admin" on public.gastos_fixos;
+drop policy if exists "gastos: leitura dono ou admin" on public.gastos;
+drop policy if exists "entradas: leitura dono ou admin" on public.entradas;
+drop policy if exists "config_cartao: leitura dono ou admin" on public.config_cartao;
+drop policy if exists "gastos_passados: leitura dono ou admin" on public.gastos_passados;
+drop policy if exists "gastos_fixos: escrita só dono" on public.gastos_fixos;
+drop policy if exists "gastos: escrita só dono" on public.gastos;
+drop policy if exists "entradas: escrita só dono" on public.entradas;
+drop policy if exists "config_cartao: escrita só dono" on public.config_cartao;
+drop policy if exists "gastos_passados: escrita só dono" on public.gastos_passados;
+
 create policy "gastos_fixos: leitura dono ou admin" on public.gastos_fixos for select to authenticated using (user_id = auth.uid() or public.eh_admin());
 create policy "gastos: leitura dono ou admin" on public.gastos for select to authenticated using (user_id = auth.uid() or public.eh_admin());
 create policy "entradas: leitura dono ou admin" on public.entradas for select to authenticated using (user_id = auth.uid() or public.eh_admin());
