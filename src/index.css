@@ -35,6 +35,30 @@
   --raio-campo: 10px;
 }
 
+:root[data-theme='light'] {
+  color-scheme: light;
+  --lateral: #f6f6f7;
+  --fundo: #f1f1f3;
+  --superficie: #ffffff;
+  --fundo-suave: #ebebee;
+  --elevado: #dedee3;
+  --tinta: #17171a;
+  --tinta-suave: #62626c;
+  --linha: #d5d5da;
+  --linha-forte: #b9b9c1;
+  --destaque: #1a1a1d;
+  --destaque-forte: #35353a;
+  --destaque-suave: #dedee3;
+  --sobre-destaque: #ffffff;
+  --positivo: #207046;
+  --positivo-suave: #dff2e6;
+  --ambar: #9a6100;
+  --ambar-claro: #fff0cf;
+  --vermelho: #b3372d;
+  --vermelho-claro: #fde5e2;
+  --sombra: 0 1px 2px rgba(0, 0, 0, .08), 0 14px 32px -18px rgba(0, 0, 0, .18);
+}
+
 *,
 *::before,
 *::after {

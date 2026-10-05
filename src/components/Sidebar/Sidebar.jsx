@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { BadgeCheck, CalendarClock, ChartNoAxesCombined, LayoutDashboard, LogOut, ReceiptText } from 'lucide-react';
+import { BadgeCheck, CalendarClock, ChartNoAxesCombined, LayoutDashboard, LogOut, Moon, ReceiptText, Sun } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import './Sidebar.css';
 
@@ -13,6 +14,12 @@ const ITENS = [
 
 export default function Sidebar() {
   const { sair, sessao } = useAuth();
+  const [temaClaro, setTemaClaro] = useState(() => localStorage.getItem('tema') === 'claro');
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = temaClaro ? 'light' : 'dark';
+    localStorage.setItem('tema', temaClaro ? 'claro' : 'escuro');
+  }, [temaClaro]);
 
   return (
     <aside className="sidebar">
@@ -34,6 +41,16 @@ export default function Sidebar() {
       </nav>
 
       <div className="sidebar__rodape">
+        <button
+          type="button"
+          className="sidebar__tema"
+          onClick={() => setTemaClaro((temaAtual) => !temaAtual)}
+          aria-label={temaClaro ? 'Ativar tema escuro' : 'Ativar tema claro'}
+          title={temaClaro ? 'Ativar tema escuro' : 'Ativar tema claro'}
+        >
+          {temaClaro ? <Moon size={18} aria-hidden="true" /> : <Sun size={18} aria-hidden="true" />}
+          <span>{temaClaro ? 'Modo escuro' : 'Modo claro'}</span>
+        </button>
         <p className="sidebar__email" title={sessao?.user?.email}>
           {sessao?.user?.email}
         </p>

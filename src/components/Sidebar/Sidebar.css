@@ -70,6 +70,24 @@
   padding: 16px 8px 0;
   border-top: 1px solid var(--linha);
 }
+.sidebar__tema {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 38px;
+  margin-bottom: 14px;
+  padding: 0 10px;
+  border: 1px solid var(--linha);
+  border-radius: 9px;
+  background: var(--fundo-suave);
+  color: var(--tinta);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.sidebar__tema:hover { border-color: var(--linha-forte); background: var(--elevado); }
 .sidebar__email {
   margin-bottom: 8px;
   overflow: hidden;
@@ -136,6 +154,19 @@
     padding: 0;
     border: 0;
   }
+  .sidebar__tema {
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    width: 56px;
+    min-height: 54px;
+    margin: 0;
+    padding: 4px;
+    border: 0;
+    background: transparent;
+    font-size: 12px;
+  }
+  .sidebar__tema:hover { background: var(--fundo-suave); }
   .sidebar__sair {
     flex-direction: column;
     justify-content: center;
