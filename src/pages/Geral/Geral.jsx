@@ -11,6 +11,7 @@ import { useToast } from '../../components/Toast/Toast';
 import { useMes } from '../../contexts/MesContext';
 import { useGastos, useProximosPagamentos } from '../../hooks/useGastos';
 import { useEntradas } from '../../hooks/useEntradas';
+import { useHistoricoFinanceiro } from '../../hooks/useHistoricoFinanceiro';
 import { useCartao } from '../../contexts/CartaoContext';
 import * as entradasService from '../../services/entradasService';
 import {
@@ -65,6 +66,7 @@ export default function Geral() {
   const { gastos, carregando: carregandoGastos, erro: erroGastos } = useGastos(mes);
   const { entradas, carregando: carregandoEntradas, erro: erroEntradas, recarregar } = useEntradas(mes);
   const { proximos, erro: erroProximos } = useProximosPagamentos();
+  const { meses: historico, carregando: carregandoHistorico, erro: erroHistorico, recarregar: recarregarHistorico } = useHistoricoFinanceiro(mes);
 
   const [modalAberto, setModalAberto] = useState(false);
   const [descricao, setDescricao] = useState('');
@@ -107,7 +109,7 @@ export default function Geral() {
     };
   }, [gastos, entradas]);
 
-  const erro = erroGastos || erroEntradas || erroProximos;
+  const erro = erroGastos || erroEntradas || erroProximos || erroHistorico;
   const carregando = carregandoGastos || carregandoEntradas;
 
   function abrirModal() {
@@ -136,6 +138,7 @@ export default function Geral() {
       setModalAberto(false);
       avisar('Entrada registrada');
       recarregar();
+      recarregarHistorico();
     } catch (err) {
       setErroForm(err.message);
     } finally {
@@ -149,6 +152,7 @@ export default function Geral() {
       await entradasService.excluir(entrada.id);
       avisar('Entrada excluída');
       recarregar();
+      recarregarHistorico();
     } catch (err) {
       avisar(err.message, 'erro');
     }
@@ -159,6 +163,7 @@ export default function Geral() {
   const fixos = categorias[0];
   const variaveis = categorias[1];
   const parcelados = categorias[2];
+  const maiorValorDoGrafico = Math.max(1, ...historico.flatMap((item) => [item.entradas, item.gastos]));
 
   return (
     <div className="geral">
@@ -216,77 +221,33 @@ export default function Geral() {
         />
       </section>
 
-      <section className="painel geral__progresso">
-        <div className="geral__progresso-texto">
-          <strong>Contas pagas neste mês</strong>
-          <span className="numero">{resumo.percentual}%</span>
-        </div>
-        <div
-          className="geral__barra"
-          role="progressbar"
-          aria-valuenow={resumo.percentual}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Percentual de contas pagas"
-        >
-          <span style={{ width: `${resumo.percentual}%` }} />
+      <section className="painel geral__grafico" aria-busy={carregandoHistorico}>
+        <header className="geral__grafico-topo">
+          <div>
+            <h2>Entradas e gastos por mês</h2>
+            <p>Todos os meses registrados aparecem aqui; role para ver períodos antigos.</p>
+          </div>
+          <div className="geral__legenda" aria-label="Legenda do gráfico">
+            <span><i className="geral__legenda-entrada" />Entradas</span>
+            <span><i className="geral__legenda-gasto" />Gastos</span>
+          </div>
+        </header>
+        <div className="geral__barras-rolagem">
+          <div className="geral__barras" style={{ '--quantidade': Math.max(6, historico.length) }} role="img" aria-label="Gráfico de entradas e gastos por mês">
+            {historico.map((item) => (
+              <div className="geral__grupo-barra" key={item.referencia}>
+                <div className="geral__colunas-grafico">
+                  <span className="geral__barra-grafico geral__barra-grafico--entrada" title={`${item.rotulo}: ${moeda(item.entradas)} em entradas`} style={{ height: `${(item.entradas / maiorValorDoGrafico) * 100}%` }} />
+                  <span className="geral__barra-grafico geral__barra-grafico--gasto" title={`${item.rotulo}: ${moeda(item.gastos)} em gastos`} style={{ height: `${(item.gastos / maiorValorDoGrafico) * 100}%` }} />
+                </div>
+                <span className="geral__rotulo-mes">{item.rotulo}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <div className="geral__colunas">
-        <section className="painel geral__resumo">
-          <h2>Resumo do mês</h2>
-          <div className="geral__tabela-rolagem">
-            <table className="geral__tabela">
-              <thead>
-                <tr>
-                  <th scope="col">Categoria</th>
-                  <th scope="col">Total</th>
-                  <th scope="col">Pago</th>
-                  <th scope="col">A pagar</th>
-                </tr>
-              </thead>
-              <tbody>
-                {categorias.map((c) => (
-                  <tr key={c.id}>
-                    <th scope="row">{c.titulo}</th>
-                    <td className="numero">{moeda(c.total)}</td>
-                    <td className="numero">{moeda(c.pago)}</td>
-                    <td className="numero">{moeda(c.aPagar)}</td>
-                  </tr>
-                ))}
-                <tr className="geral__tabela-total">
-                  <th scope="row">Total de contas</th>
-                  <td className="numero">{moeda(resumo.total)}</td>
-                  <td className="numero">{moeda(resumo.pago)}</td>
-                  <td className="numero">{moeda(resumo.divida)}</td>
-                </tr>
-                {formas.map((f) => (
-                  <tr key={f.id} className="geral__tabela-forma">
-                    <th scope="row">{f.titulo}</th>
-                    <td className="numero">{moeda(f.total)}</td>
-                    <td className="numero">{moeda(f.pago)}</td>
-                    <td className="numero">{moeda(f.aPagar)}</td>
-                  </tr>
-                ))}
-                <tr className="geral__tabela-entrada">
-                  <th scope="row">Valores adicionados</th>
-                  <td className="numero">{moeda(resumo.entrou)}</td>
-                  <td>—</td>
-                  <td>—</td>
-                </tr>
-                <tr className={`geral__tabela-saldo ${resumo.saldo < 0 ? 'geral__tabela-saldo--negativo' : ''}`}>
-                  <th scope="row">Saldo previsto</th>
-                  <td className="numero">{moeda(resumo.saldo)}</td>
-                  <td>—</td>
-                  <td>—</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section className="painel geral__lista">
+      <section className="painel geral__lista geral__pagamentos">
           <header className="geral__lista-topo">
             <h2>Próximos pagamentos</h2>
             <Link to="/pagamentos" className="geral__link">
@@ -311,8 +272,7 @@ export default function Geral() {
               ))}
             </ul>
           )}
-        </section>
-      </div>
+      </section>
 
       <div className="geral__colunas">
         <ListaGastos

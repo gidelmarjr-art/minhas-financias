@@ -30,6 +30,17 @@ export async function listarPorMes(mes) {
   );
 }
 
+/** Gastos entre duas datas, usado no gráfico comparativo da visão Geral. */
+export async function listarPorPeriodo(inicio, fim) {
+  return resolver(
+    await supabase
+      .from(TABELA)
+      .select('valor, data_pagamento')
+      .gte('data_pagamento', inicio)
+      .lte('data_pagamento', fim),
+  );
+}
+
 /** Contas não pagas, das mais antigas (atrasadas) às mais distantes. */
 export async function listarProximos(limite = 6) {
   await garantirFixosDoMes(mesAtual());

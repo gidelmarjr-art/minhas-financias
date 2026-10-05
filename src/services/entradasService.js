@@ -20,6 +20,17 @@ export async function listarPorMes(mes) {
   );
 }
 
+export async function listarPorPeriodo(inicio, fim) {
+  return resolver(
+    await supabase
+      .from(TABELA)
+      .select('*')
+      .gte('data_entrada', inicio)
+      .lte('data_entrada', fim)
+      .order('data_entrada', { ascending: true }),
+  );
+}
+
 export async function criar({ descricao, valor, data_entrada }) {
   return resolver(
     await supabase.from(TABELA).insert([{ descricao, valor, data_entrada }]).select().single(),

@@ -4,24 +4,44 @@
 
 .geral__cards {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 16px;
 }
-/* Primeira linha: situação do mês (3 cartões). Segunda: como você paga (2 cartões). */
-.geral__cards > :nth-child(-n + 3) {
-  grid-column: span 2;
-}
-.geral__cards > :nth-child(n + 4) {
-  grid-column: span 3;
-}
-
-.geral__progresso {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.geral__grafico {
   margin-top: 16px;
-  padding: 18px 20px;
+  padding: 20px;
 }
+.geral__grafico-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.geral__grafico-topo h2 { font-size: 18px; }
+.geral__grafico-topo p { margin-top: 4px; color: var(--tinta-suave); font-size: 14px; }
+.geral__legenda { display: flex; flex-wrap: wrap; gap: 12px; color: var(--tinta-suave); font-size: 13px; }
+.geral__legenda span { display: inline-flex; align-items: center; gap: 6px; }
+.geral__legenda i { width: 10px; height: 10px; border-radius: 3px; }
+.geral__legenda-entrada, .geral__barra-grafico--entrada { background: var(--positivo); }
+.geral__legenda-gasto, .geral__barra-grafico--gasto { background: var(--ambar); }
+.geral__barras {
+  display: grid;
+  grid-template-columns: repeat(var(--quantidade), minmax(42px, 1fr));
+  align-items: end;
+  gap: 12px;
+  height: 236px;
+  margin-top: 18px;
+  padding: 12px 8px 0;
+  border-bottom: 1px solid var(--linha);
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 57px, var(--linha) 58px);
+  min-width: calc(var(--quantidade) * 54px);
+}
+.geral__barras-rolagem { overflow-x: auto; }
+.geral__grupo-barra { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; min-width: 0; }
+.geral__colunas-grafico { display: flex; align-items: flex-end; justify-content: center; gap: 5px; flex: 1; }
+.geral__barra-grafico { display: block; width: min(28px, 38%); min-height: 2px; border-radius: 6px 6px 0 0; transition: height .25s ease; }
+.geral__rotulo-mes { padding-top: 8px; color: var(--tinta-suave); font-size: 12px; font-weight: 600; text-align: center; }
+.geral__pagamentos { margin-top: 16px; }
 .geral__progresso-texto {
   display: flex;
   align-items: baseline;
@@ -113,13 +133,7 @@
 
 @media (max-width: 900px) {
   .geral__cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .geral__cards > :nth-child(n) {
-    grid-column: span 1;
-  }
-  .geral__cards > :last-child {
-    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 @media (max-width: 800px) {
@@ -129,12 +143,12 @@
 }
 @media (max-width: 480px) {
   .geral__cards {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
   }
-  .geral__cards > :nth-child(n) {
-    grid-column: auto;
-  }
+  .geral__cards > :last-child { grid-column: 1 / -1; }
+  .geral__grafico-topo { flex-direction: column; }
+  .geral__barras { gap: 5px; height: 190px; padding-right: 0; padding-left: 0; }
   .geral__item {
     flex-wrap: wrap;
   }
