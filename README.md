@@ -1,68 +1,60 @@
-# Minhas Finanças
+# 💳 Minhas Finanças — Dashboard Financeiro Pessoal
 
-Dashboard responsivo (React + Vite), em preto e cinza, para controlar as contas mês a mês, com login por senha e banco no Supabase.
+Um sistema web completo e moderno de gestão financeira pessoal, projetado para o controle detalhado de despesas fixas, variáveis, compras parceladas e gerenciamento de faturas de cartão de crédito, com suporte a múltiplos usuários e projeções mensais.
 
-## Abas
+---
 
-- **Geral** — quanto entrou no mês, quanto está em dívida, quanto já foi pago, saldo previsto e próximos pagamentos.
-- **Cadastro de gastos** — três abas:
-  - *Gastos fixos*: repetem todo mês até você encerrar (nome, valor e dia do vencimento).
-  - *Gastos variáveis*: valem só para o mês da data de pagamento.
-  - *Compras parceladas*: valor da parcela, nº de parcelas e data da 1ª; uma parcela entra em cada mês.
-- **Forma de pagamento** — cada gasto é *débito* (já entra como pago), *crédito* (vai para a fatura do cartão)
-  ou *pagar manualmente* (boleto, Pix, conta). Parcelados aceitam crédito ou manual.
-- **Fatura do cartão** — o ciclo é configurável (padrão: fecha dia 20, vence dia 27; ajuste em "Ajustar cartão").
-  No crédito você informa a *data da compra* e o app descobre em qual fatura ela cai: compras até o dia do
-  fechamento entram na fatura daquele mês, as seguintes na do mês seguinte. Parcelas caem uma por fatura.
-- **Confirmar pagamento** — marca a conta como paga com a data do pagamento e o banco usado (e permite desfazer).
+## 📸 Demonstração da Aplicação
 
-- **Previsão de gastos** — detalha gastos fixos, variáveis, parcelados e a fatura, sem duplicar o valor do crédito no total previsto.
-- **Gastos passados** — registra um total consolidado e observações para cada mês anterior; o mesmo mês pode ser atualizado.
+### 📊 Visão Geral (Dashboard)
+Painel principal consolidado com resumos do mês, gráficos dinâmicos e próximos pagamentos.
+<div align="center">
+  <img src="img/geral.png" alt="Visão Geral do Dashboard" width="100%" />
+</div>
 
-## Como rodar
+### 📝 Cadastro de Gastos
+Gerenciamento flexível de despesas divididas entre fixas, variáveis e compras parceladas, com suporte a formas de pagamento por débito, crédito ou manual[cite: 11].
+<div align="center">
+  <img src="img/cadastrodegastos.png" alt="Cadastro de Gastos" width="100%" />
+</div>
 
-1. `npm install`
-2. No Supabase, abra **SQL Editor** e rode `supabase/schema.sql` (instalação nova) ou, se já tinha rodado a
-   versão anterior, rode nesta ordem `supabase/migracao-tipos-de-gasto.sql`,
-   `supabase/migracao-forma-pagamento.sql`, `supabase/migracao-fatura-cartao.sql` e
-   `supabase/migracao-gastos-passados.sql`.
-3. Em **Authentication → Users**, crie o seu usuário (e-mail + senha). Desative o cadastro público em
-   **Authentication → Providers → Email → Allow new users to sign up** para ninguém mais criar conta.
-4. Copie `.env.example` para `.env` e preencha `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`
-   (Project Settings → API).
-5. `npm run dev`
+### 🔮 Previsão de Gastos
+Projeção detalhada e categorizada das despesas previstas para o mês vigente[cite: 10].
+<div align="center">
+  <img src="img/previsaodegastos.png" alt="Previsão de Gastos" width="100%" />
+</div>
 
-## Multiusuário: UsuarioG, UsuarioT e Admin
+### ✅ Confirmação de Pagamento
+Módulo dedicado para controle e quitação de contas pendentes e fechamento de faturas de cartão de crédito[cite: 7].
+<div align="center">
+  <img src="img/confirmmarpagamento.png" alt="Confirmação de Pagamento" width="100%" />
+</div>
 
-1. No **SQL Editor** do Supabase, execute `supabase/migracao-multiusuario.sql` uma única vez.
-   Todos os usuários que já existiam são mantidos e recebem o perfil `usuario_g`; seus dados não são alterados.
-2. Crie a conta do **UsuarioT** em **Authentication → Users**. O perfil dela é criado automaticamente como
-   `usuario_t`; ela enxerga e altera somente os próprios dados.
-3. Para tornar uma conta **Admin**, execute no SQL Editor (troque pelo e-mail da conta):
-   ```sql
-   update public.perfis
-   set papel = 'admin', nome = 'Admin'
-   where id = (select id from auth.users where email = 'admin@exemplo.com');
-   ```
-4. Entre com cada conta para testar. O Admin recebe apenas a tela **Geral**, com o seletor para UsuarioG,
-   UsuarioT ou ambos. Os botões e rotas de alteração são ocultos e o banco bloqueia escrita nos dados alheios.
+### 📈 Gastos Passados
+Registro e histórico consolidado de meses anteriores para embasamento de análises financeiras[cite: 8].
+<div align="center">
+  <img src="img/gastospassados.png" alt="Gastos Passados" width="100%" />
+</div>
 
-## Estrutura
+---
 
-```
-src/
-├── App.jsx / main.jsx / index.css   rotas, entrada e tokens globais
-├── components/                      cada componente na sua pasta (.jsx + .css)
-│                                    (inclui Abas, ListaGastos e ExclusaoModal)
-├── layouts/DashboardLayout/
-├── pages/                           Login, Geral, CadastroGastos, ConfirmarPagamento
-├── contexts/                        AuthContext (sessão) e MesContext (mês selecionado)
-├── services/                        chamadas ao Supabase (gastos, gastos fixos, entradas)
-├── hooks/                           useGastos, useEntradas
-└── lib/                             supabaseClient e funções de formatação
-```
+## 🚀 Tecnologias Utilizadas
 
-## Deploy
+Este projeto foi desenvolvido utilizando tecnologias modernas do ecossistema web:
 
-Como o app usa rotas (`/geral`, `/gastos`…), configure o host (Vercel, Netlify…) para redirecionar
-todas as rotas para `index.html`.
+* **Front-end:** React, Vite, JavaScript / TypeScript, Tailwind CSS
+* **Back-end & Banco de Dados:** Supabase (PostgreSQL)
+* **Segurança & Autenticação:** Supabase Auth & Row Level Security (RLS)
+* **Hospedagem & Deploy:** Vercel
+
+---
+
+## ⚙️ Principais Funcionalidades
+
+* **Controle de Gastos Flexível:** Cadastro de despesas fixas (recorrentes), variáveis e compras parceladas[cite: 11].
+* **Gestão de Cartão de Crédito:** Definição personalizada de dias de fechamento e vencimento de fatura, com alocação automática de compras.
+* **Múltiplas Formas de Pagamento:** Suporte a pagamentos via débito automático (com indicação de banco), crédito ou manual[cite: 2].
+* **Segurança Baseada em Linha (RLS):** Isolamento completo de dados por usuário utilizando políticas de segurança nativas do PostgreSQL[cite: 4, 6].
+* **Histórico e Projeções:** Acompanhamento de meses passados[cite: 3] e painel de projeções futuras[cite: 10].
+
+---
