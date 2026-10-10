@@ -53,8 +53,8 @@ Este projeto foi desenvolvido utilizando tecnologias modernas do ecossistema web
 
 * **Controle de Gastos Flexível:** Cadastro de despesas fixas (recorrentes), variáveis e compras parceladas[cite: 11].
 * **Gestão de Cartão de Crédito:** Definição personalizada de dias de fechamento e vencimento de fatura, com alocação automática de compras.
-* **Múltiplas Formas de Pagamento:** Suporte a pagamentos via débito automático (com indicação de banco), crédito ou manual[cite: 2].
-* **Segurança Baseada em Linha (RLS):** Isolamento completo de dados por usuário utilizando políticas de segurança nativas do PostgreSQL
-* **Histórico e Projeções:** Acompanhamento de meses passados[cite: 3] e painel de projeções futuras
+* **Múltiplas Formas de Pagamento:** Suporte a pagamentos via débito automático (com indicação de banco), crédito ou manual.
+* **Segurança Baseada em Linha (RLS):** Isolamento completo de dados por usuário utilizando políticas de segurança nativas do PostgreSQL.
+* **Histórico e Projeções:** Acompanhamento de meses passados[cite: 3] e painel de projeções futuras.
 
 ---
