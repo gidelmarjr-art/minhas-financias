@@ -19,19 +19,19 @@ Gerenciamento flexível de despesas divididas entre fixas, variáveis e compras 
 </div>
 
 ### 🔮 Previsão de Gastos
-Projeção detalhada e categorizada das despesas previstas para o mês vigente[cite: 10].
+Projeção detalhada e categorizada das despesas previstas para o mês vigente.
 <div align="center">
   <img src="img/previsaodegastos.png" alt="Previsão de Gastos" width="100%" />
 </div>
 
 ### ✅ Confirmação de Pagamento
-Módulo dedicado para controle e quitação de contas pendentes e fechamento de faturas de cartão de crédito[cite: 7].
+Módulo dedicado para controle e quitação de contas pendentes e fechamento de faturas de cartão de crédito.
 <div align="center">
   <img src="img/confirmmarpagamento.png" alt="Confirmação de Pagamento" width="100%" />
 </div>
 
 ### 📈 Gastos Passados
-Registro e histórico consolidado de meses anteriores para embasamento de análises financeiras[cite: 8].
+Registro e histórico consolidado de meses anteriores para embasamento de análises financeiras.
 <div align="center">
   <img src="img/gastospassados.png" alt="Gastos Passados" width="100%" />
 </div>
