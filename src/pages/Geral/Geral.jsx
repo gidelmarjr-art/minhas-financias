@@ -14,6 +14,7 @@ import { useHistoricoFinanceiro } from '../../hooks/useHistoricoFinanceiro';
 import { useCartao } from '../../contexts/CartaoContext';
 import { usePerfil } from '../../contexts/PerfilContext';
 import * as entradasService from '../../services/entradasService';
+import { ResponsiveContainer, ComposedChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 import {
   dataCurta,
   dataDiaMes,
@@ -133,7 +134,15 @@ export default function Geral() {
 
   const [debito, credito] = formas;
   const periodo = periodoDaFatura(mes, cartao);
-  const maiorValorDoGrafico = Math.max(1, ...historico.flatMap((item) => [item.entradas, item.gastos]));
+  
+  // Mapeia o histórico para o formato do novo gráfico de linhas
+  const dadosGrafico = useMemo(() => {
+    return historico.map((item) => ({
+      date: item.rotulo,
+      entradas: item.entradas,
+      gastos: item.gastos,
+    }));
+  }, [historico]);
 
   return (
     <div className="geral">
@@ -203,29 +212,47 @@ export default function Geral() {
         />
       </section>
 
+      {/* Novo Gráfico Moderno de Linhas */}
       <section className="painel geral__grafico" aria-busy={carregandoHistorico}>
         <header className="geral__grafico-topo">
           <div>
             <h2>Entradas e gastos por mês</h2>
-            <p>Todos os meses registrados aparecem aqui; role para ver períodos antigos.</p>
+            <p>Todos os meses registrados aparecem aqui; acompanhamento histórico.</p>
           </div>
           <div className="geral__legenda" aria-label="Legenda do gráfico">
-            <span><i className="geral__legenda-entrada" />Entradas</span>
-            <span><i className="geral__legenda-gasto" />Gastos</span>
+            <span><i className="geral__legenda-entrada" style={{ background: '#10b981' }} />Entradas</span>
+            <span><i className="geral__legenda-gasto" style={{ background: '#f59e0b' }} />Gastos</span>
           </div>
         </header>
-        <div className="geral__barras-rolagem">
-          <div className="geral__barras" style={{ '--quantidade': Math.max(6, historico.length) }} role="img" aria-label="Gráfico de entradas e gastos por mês">
-            {historico.map((item) => (
-              <div className="geral__grupo-barra" key={item.referencia}>
-                <div className="geral__colunas-grafico">
-                  <span className="geral__barra-grafico geral__barra-grafico--entrada" title={`${item.rotulo}: ${moeda(item.entradas)} em entradas`} style={{ height: `${(item.entradas / maiorValorDoGrafico) * 100}%` }} />
-                  <span className="geral__barra-grafico geral__barra-grafico--gasto" title={`${item.rotulo}: ${moeda(item.gastos)} em gastos`} style={{ height: `${(item.gastos / maiorValorDoGrafico) * 100}%` }} />
-                </div>
-                <span className="geral__rotulo-mes">{item.rotulo}</span>
-              </div>
-            ))}
-          </div>
+
+        <div style={{ width: '100%', height: 320, marginTop: '20px' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={dadosGrafico} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--linha)" />
+              <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: 'var(--tinta-suave)' }} />
+              <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: 'var(--tinta-suave)' }} tickFormatter={(val) => `R$ ${val}`} />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px 14px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                        <p style={{ fontWeight: 'bold', marginBottom: '6px', fontSize: '13px', color: '#1e293b' }}>{label}</p>
+                        {payload.map((entry, idx) => (
+                          <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', fontSize: '12px', color: entry.dataKey === 'entradas' ? '#10b981' : '#f59e0b' }}>
+                            <span style={{ textTransform: 'capitalize' }}>{entry.dataKey}:</span>
+                            <span style={{ fontWeight: '600' }}>{moeda(entry.value)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Line type="monotone" dataKey="entradas" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981' }} activeDot={{ r: 7 }} />
+              <Line type="monotone" dataKey="gastos" stroke="#f59e0b" strokeWidth={3} dot={{ r: 4, fill: '#f59e0b' }} activeDot={{ r: 7 }} />
+            </ComposedChart>
+          </ResponsiveContainer>
         </div>
       </section>
 
