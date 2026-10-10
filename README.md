@@ -55,6 +55,6 @@ Este projeto foi desenvolvido utilizando tecnologias modernas do ecossistema web
 * **Gestão de Cartão de Crédito:** Definição personalizada de dias de fechamento e vencimento de fatura, com alocação automática de compras.
 * **Múltiplas Formas de Pagamento:** Suporte a pagamentos via débito automático (com indicação de banco), crédito ou manual[cite: 2].
 * **Segurança Baseada em Linha (RLS):** Isolamento completo de dados por usuário utilizando políticas de segurança nativas do PostgreSQL[cite: 4, 6].
-* **Histórico e Projeções:** Acompanhamento de meses passados[cite: 3] e painel de projeções futuras[cite: 10].
+* **Histórico e Projeções:** Acompanhamento de meses passados[cite: 3] e painel de projeções futuras
 
 ---
