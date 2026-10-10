@@ -13,7 +13,7 @@ Painel principal consolidado com resumos do mês, gráficos dinâmicos e próxim
 </div>
 
 ### 📝 Cadastro de Gastos
-Gerenciamento flexível de despesas divididas entre fixas, variáveis e compras parceladas, com suporte a formas de pagamento por débito, crédito ou manual[cite: 11].
+Gerenciamento flexível de despesas divididas entre fixas, variáveis e compras parceladas, com suporte a formas de pagamento por débito, crédito ou manual.
 <div align="center">
   <img src="img/cadastrodegastos.png" alt="Cadastro de Gastos" width="100%" />
 </div>
@@ -51,7 +51,7 @@ Este projeto foi desenvolvido utilizando tecnologias modernas do ecossistema web
 
 ## ⚙️ Principais Funcionalidades
 
-* **Controle de Gastos Flexível:** Cadastro de despesas fixas (recorrentes), variáveis e compras parceladas[cite: 11].
+* **Controle de Gastos Flexível:** Cadastro de despesas fixas (recorrentes), variáveis e compras parceladas.
 * **Gestão de Cartão de Crédito:** Definição personalizada de dias de fechamento e vencimento de fatura, com alocação automática de compras.
 * **Múltiplas Formas de Pagamento:** Suporte a pagamentos via débito automático (com indicação de banco), crédito ou manual.
 * **Segurança Baseada em Linha (RLS):** Isolamento completo de dados por usuário utilizando políticas de segurança nativas do PostgreSQL.
