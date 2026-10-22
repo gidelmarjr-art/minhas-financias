@@ -160,3 +160,11 @@ export function dataNoPeriodo({ inicio, fim }, dia) {
   const candidatas = [dataDoMes(inicio.slice(0, 7), dia), dataDoMes(fim.slice(0, 7), dia)];
   return candidatas.find((c) => c >= inicio && c <= fim) ?? fim;
 }
+
+export function saudacao(agora = new Date()) {
+  const hora = agora.getHours();
+  if (hora < 5) return 'Boa noite';
+  if (hora < 12) return 'Bom dia';
+  if (hora < 18) return 'Boa tarde';
+  return 'Boa noite';
+}

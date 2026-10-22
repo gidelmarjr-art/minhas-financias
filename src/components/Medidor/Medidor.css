@@ -1,0 +1,53 @@
+.medidor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+.medidor__rotulo {
+  color: var(--tinta-suave);
+  font-size: 14px;
+  font-weight: 500;
+}
+.medidor__arco {
+  position: relative;
+  width: 100%;
+  max-width: 260px;
+  margin: auto;
+}
+.medidor__arco svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+.medidor__trilha,
+.medidor__preenchido {
+  fill: none;
+  stroke-width: 20;
+  stroke-linecap: round;
+}
+.medidor__trilha {
+  stroke: var(--fundo-suave);
+}
+.medidor__preenchido {
+  stroke: var(--salvia);
+  transition: stroke-dasharray 1.5s var(--suave) 0.45s;
+}
+.medidor__centro {
+  position: absolute;
+  inset: auto 0 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+.medidor__centro strong {
+  font-size: clamp(30px, 3vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.medidor__centro span {
+  margin-top: 4px;
+  color: var(--tinta-suave);
+  font-size: 12.5px;
+}

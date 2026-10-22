@@ -8,28 +8,15 @@ function resolver({ data, error }) {
   return data;
 }
 
-export async function listarPorMes(mes, userId) {
+export async function listarPorMes(mes) {
   const { inicio, fim } = intervaloDoMes(mes);
   return resolver(
-    await (userId ? supabase
+    await supabase
       .from(TABELA)
       .select('*')
-      .eq('user_id', userId) : supabase.from(TABELA).select('*'))
       .gte('data_entrada', inicio)
       .lte('data_entrada', fim)
       .order('data_entrada', { ascending: false }),
-  );
-}
-
-export async function listarPorPeriodo(inicio, fim, userId) {
-  return resolver(
-    await (userId ? supabase
-      .from(TABELA)
-      .select('*')
-      .eq('user_id', userId) : supabase.from(TABELA).select('*'))
-      .gte('data_entrada', inicio)
-      .lte('data_entrada', fim)
-      .order('data_entrada', { ascending: true }),
   );
 }
 

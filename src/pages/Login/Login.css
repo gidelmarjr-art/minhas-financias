@@ -3,38 +3,54 @@
   grid-template-columns: minmax(320px, 5fr) 6fr;
   min-height: 100%;
 }
+
+/* O único elemento "de vitrine" do app: os raios da marca, enormes e girando devagar */
 .login__marca {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 16px;
+  gap: 18px;
   padding: 48px clamp(28px, 5vw, 72px);
-  border-right: 1px solid var(--linha);
-  background: var(--lateral);
-  color: var(--tinta);
+  overflow: hidden;
+  background: var(--cartao-destaque);
+  color: var(--sobre-cartao-destaque);
+}
+.login__raios {
+  position: absolute;
+  right: -140px;
+  bottom: -120px;
+  width: 640px;
+  height: 640px;
+  color: var(--sobre-cartao-destaque);
+  opacity: 0.12;
+  pointer-events: none;
 }
 .login__logo {
+  position: relative;
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: var(--destaque);
-  color: var(--sobre-destaque);
-  font-family: var(--fonte-titulo);
-  font-size: 26px;
-  font-weight: 700;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--sobre-cartao-destaque);
+  animation: login-sobe 0.9s var(--suave) both;
 }
 .login__marca h1 {
-  max-width: 14ch;
-  font-size: clamp(32px, 4.2vw, 52px);
-  line-height: 1.05;
-  color: var(--tinta);
+  position: relative;
+  max-width: 13ch;
+  font-size: clamp(34px, 4.6vw, 58px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  animation: login-sobe 0.9s var(--suave) 0.12s both;
 }
 .login__marca p {
-  max-width: 38ch;
-  color: var(--tinta-suave);
+  position: relative;
+  max-width: 36ch;
   font-size: 17px;
+  opacity: 0.8;
+  animation: login-sobe 0.9s var(--suave) 0.24s both;
 }
 
 .login__painel {
@@ -47,10 +63,17 @@
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
+  padding: 36px 34px;
+  border: 1px solid var(--linha);
+  border-radius: 32px;
+  background: var(--superficie);
+  box-shadow: var(--sombra);
+  animation: login-sobe 0.9s var(--suave) 0.3s both;
 }
 .login__form h2 {
-  font-size: 28px;
+  font-size: 30px;
+  letter-spacing: -0.02em;
 }
 .login__sub {
   margin-top: -8px;
@@ -59,34 +82,49 @@
 .login__form code {
   font-size: 13px;
 }
+.login__form .btn {
+  margin-top: 4px;
+  min-height: 50px;
+}
+
+@keyframes login-sobe {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
 
 @media (max-width: 800px) {
-  .login__marca {
-    border-right: 0;
-    border-bottom: 1px solid var(--linha);
-  }
   .login {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
   }
   .login__marca {
     gap: 10px;
-    padding: 28px 24px;
+    padding: 28px 24px 36px;
   }
   .login__marca p {
     display: none;
   }
+  .login__raios {
+    right: -160px;
+    bottom: -260px;
+    opacity: 0.1;
+  }
   .login__logo {
-    width: 40px;
-    height: 40px;
-    font-size: 22px;
+    width: 44px;
+    height: 44px;
   }
   .login__marca h1 {
     max-width: none;
-    font-size: 28px;
+    font-size: 30px;
   }
   .login__painel {
     align-items: start;
-    padding-top: 28px;
+    padding-top: 0;
+  }
+  .login__form {
+    margin-top: -18px;
+    padding: 28px 24px;
   }
 }

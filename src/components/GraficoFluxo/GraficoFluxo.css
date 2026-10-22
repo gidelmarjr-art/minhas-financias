@@ -1,0 +1,140 @@
+.fluxo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.fluxo__area {
+  position: relative;
+  height: 180px;
+  touch-action: pan-y;
+  cursor: crosshair;
+}
+.fluxo__area svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.fluxo__grade {
+  stroke: var(--linha);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.fluxo__linha {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  vector-effect: non-scaling-stroke;
+  animation: fluxo-desenha 1.7s var(--suave) both;
+}
+.fluxo__linha--gastos {
+  stroke: var(--tinta);
+  animation-delay: 0.45s;
+}
+.fluxo__linha--entradas {
+  stroke: var(--salvia);
+  animation-delay: 0.75s;
+}
+.fluxo__sombra {
+  fill: var(--tinta);
+  opacity: 0.06;
+  animation: fluxo-sombra 1s ease-out 1.6s both;
+}
+.fluxo__hoje {
+  stroke: var(--tinta-suave);
+  stroke-width: 1;
+  stroke-dasharray: 4 5;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.6;
+}
+@keyframes fluxo-desenha {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes fluxo-sombra {
+  from {
+    opacity: 0;
+  }
+}
+
+.fluxo__guia {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--linha-forte);
+  pointer-events: none;
+}
+.fluxo__ponto {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border: 3px solid var(--superficie);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.fluxo__ponto--entradas {
+  background: var(--salvia);
+}
+.fluxo__ponto--gastos {
+  background: var(--tinta);
+}
+.fluxo__dica {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 190px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--tinta);
+  color: var(--fundo);
+  font-size: 12.5px;
+  pointer-events: none;
+  transform: translateX(14px);
+  box-shadow: 0 14px 28px -12px rgba(0, 0, 0, 0.5);
+}
+.fluxo__dica--esquerda {
+  transform: translateX(calc(-100% - 14px));
+}
+.fluxo__dica strong {
+  font-size: 13px;
+}
+.fluxo__dica span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.fluxo__dica b {
+  margin-left: auto;
+  font-weight: 700;
+}
+.fluxo__marca {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.fluxo__marca--entradas {
+  background: var(--salvia);
+}
+.fluxo__marca--gastos {
+  background: var(--fundo);
+  box-shadow: 0 0 0 1px var(--fundo-suave);
+}
+
+.fluxo__eixo {
+  display: flex;
+  justify-content: space-between;
+  color: var(--tinta-suave);
+  font-size: 12px;
+}

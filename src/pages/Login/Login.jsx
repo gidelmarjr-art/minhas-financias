@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabaseConfigurado } from '../../lib/supabaseClient';
+import BotaoTema from '../../components/BotaoTema/BotaoTema';
+import Marca from '../../components/Marca/Marca';
 import './Login.css';
 
 export default function Login() {
@@ -28,9 +30,11 @@ export default function Login() {
 
   return (
     <div className="login">
+      <BotaoTema className="botao-tema--flutuante" />
       <section className="login__marca">
+        <Marca className="login__raios" tamanho={420} animada />
         <span className="login__logo" aria-hidden="true">
-          M
+          <Marca tamanho={30} />
         </span>
         <h1>Suas contas, mês a mês.</h1>
         <p>

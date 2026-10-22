@@ -1,0 +1,21 @@
+.marca {
+  display: block;
+  overflow: visible;
+}
+.marca__raios {
+  transform-origin: 24px 24px;
+  transition: transform 0.9s var(--suave);
+}
+/* gira quando o ponteiro passa por cima (ou quando a marca é decorativa) */
+:hover > .marca .marca__raios,
+.marca:hover .marca__raios {
+  transform: rotate(45deg);
+}
+.marca--animada .marca__raios {
+  animation: marca-gira 48s linear infinite;
+}
+@keyframes marca-gira {
+  to {
+    transform: rotate(360deg);
+  }
+}

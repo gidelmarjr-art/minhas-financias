@@ -4,6 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b0b0c" />
+    <script>
+      // Define o tema antes de a página aparecer, para não piscar. Padrão: escuro.
+      try {
+        var t = localStorage.getItem('minhas-financias:tema');
+        document.documentElement.dataset.tema = t === 'claro' || t === 'escuro' ? t : 'escuro';
+      } catch (e) {
+        document.documentElement.dataset.tema = 'escuro';
+      }
+    </script>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💸</text></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

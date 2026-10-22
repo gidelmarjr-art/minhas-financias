@@ -100,6 +100,7 @@ export default function ListaGastos({
           {gastos.map((g) => (
             <li
               key={g.id}
+              data-status={statusDoGasto(g)}
               className={`lista-gastos__item ${destaqueId === g.id ? 'lista-gastos__item--ativo' : ''}`}
             >
               <div className="lista-gastos__info">

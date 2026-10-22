@@ -30,15 +30,34 @@
 }
 
 .lista-gastos__item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 8px;
-  border-top: 1px solid var(--linha);
-  border-radius: 8px;
+  margin-top: 4px;
+  padding: 12px 8px 12px 20px;
+  border-radius: 16px;
+  transition: background-color 0.2s;
 }
-.lista-gastos__item:first-child {
-  border-top: 0;
+.lista-gastos__item:hover {
+  background: var(--fundo-suave);
+}
+/* barra à esquerda: a cor conta a situação da conta */
+.lista-gastos__item::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 6px;
+  width: 4px;
+  border-radius: 4px;
+  background: var(--ambar);
+}
+.lista-gastos__item[data-status='pago']::before {
+  background: var(--positivo);
+}
+.lista-gastos__item[data-status='atrasado']::before {
+  background: var(--vermelho);
 }
 .lista-gastos__item--ativo {
   background: var(--destaque-suave);
@@ -108,7 +127,6 @@
   .lista-gastos__valor {
     min-width: 0;
     margin-left: auto;
-    white-space: nowrap;
   }
 }
 

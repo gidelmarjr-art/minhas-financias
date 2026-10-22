@@ -1,6 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useAuth } from './AuthContext';
-import { usePerfil } from './PerfilContext';
 import ConfigCartaoModal from '../components/ConfigCartaoModal/ConfigCartaoModal';
 import * as cartaoService from '../services/cartaoService';
 import { CARTAO_PADRAO } from '../lib/format';
@@ -13,13 +12,12 @@ const CartaoContext = createContext(null);
  */
 export function CartaoProvider({ children }) {
   const { sessao } = useAuth();
-  const { isAdmin } = usePerfil();
   const [cartao, setCartao] = useState({ ...CARTAO_PADRAO, salvo: false });
   const [versao, setVersao] = useState(0);
   const [aberto, setAberto] = useState(false);
 
   useEffect(() => {
-    if (!sessao || isAdmin) {
+    if (!sessao) {
       cartaoService.limparCache();
       return;
     }
@@ -27,7 +25,7 @@ export function CartaoProvider({ children }) {
       .obterConfig()
       .then(setCartao)
       .catch(() => {});
-  }, [sessao, isAdmin]);
+  }, [sessao]);
 
   const salvar = useCallback(async (config) => {
     const novo = await cartaoService.salvarConfig(config);
@@ -43,12 +41,12 @@ export function CartaoProvider({ children }) {
   return (
     <CartaoContext.Provider value={valor}>
       {children}
-      {!isAdmin && <ConfigCartaoModal
+      <ConfigCartaoModal
         aberto={aberto}
         cartao={cartao}
         onFechar={() => setAberto(false)}
         onSalvar={salvar}
-      />}
+      />
     </CartaoContext.Provider>
   );
 }

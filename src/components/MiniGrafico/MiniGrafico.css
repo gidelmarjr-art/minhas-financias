@@ -1,0 +1,52 @@
+.mini-grafico {
+  display: block;
+  width: 72px;
+  height: 38px;
+  margin-left: auto;
+  overflow: visible;
+  color: var(--salvia);
+}
+
+.mini-grafico__barra {
+  fill: currentColor;
+  opacity: 0.38;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: barra-cresce 0.7s var(--mola) both;
+  animation-delay: calc(var(--atraso, 0ms) + var(--i) * 60ms);
+}
+.mini-grafico__barra--maior {
+  opacity: 1;
+}
+@keyframes barra-cresce {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+.mini-grafico__linha {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: linha-desenha 1.3s var(--suave) both;
+  animation-delay: var(--atraso, 0ms);
+}
+.mini-grafico__area {
+  fill: currentColor;
+  opacity: 0.14;
+  animation: area-aparece 0.8s ease-out both;
+  animation-delay: calc(var(--atraso, 0ms) + 0.7s);
+}
+@keyframes linha-desenha {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes area-aparece {
+  from {
+    opacity: 0;
+  }
+}

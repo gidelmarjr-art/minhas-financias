@@ -1,0 +1,48 @@
+.botao-tema {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--tinta-suave);
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s, transform 0.25s var(--mola);
+}
+.botao-tema:hover {
+  background: var(--fundo-suave);
+  color: var(--tinta);
+  transform: scale(1.08);
+}
+.botao-tema:active {
+  transform: scale(0.92);
+}
+.botao-tema svg {
+  grid-area: 1 / 1;
+  transition: transform 0.6s var(--mola), opacity 0.3s;
+}
+
+/* escuro: mostra o sol (clicar leva ao claro) */
+:root[data-tema='escuro'] .botao-tema__lua,
+:root:not([data-tema]) .botao-tema__lua {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.3);
+}
+:root[data-tema='claro'] .botao-tema__sol {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.3);
+}
+
+/* versão solta, no canto da tela (login) */
+.botao-tema--flutuante {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 40;
+  border: 1px solid var(--linha);
+  background: var(--superficie);
+  box-shadow: var(--sombra);
+}

@@ -83,22 +83,17 @@
     padding: 4px 16px;
   }
   .pagamentos__item {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    flex-wrap: wrap;
     gap: 8px 12px;
   }
   .pagamentos__info {
-    grid-column: 1;
-    min-width: 0;
+    flex-basis: 60%;
   }
   .pagamentos__valor {
     min-width: 0;
-    grid-column: 2;
-    grid-row: 1;
-    white-space: nowrap;
+    margin-left: auto;
   }
   .pagamentos__item .btn {
-    grid-column: 1 / -1;
     width: 100%;
   }
 }
