@@ -12,12 +12,19 @@ export function limparCache() {
   promessa = null;
 }
 
-/** Configuração do cartão ({ dia_fechamento, dia_vencimento, salvo }). Usa valores provisórios se ainda não salva. */
+/** Configuração do cartão ({ dia_fechamento, dia_vencimento, salvo }) do usuário logado. */
 export function obterConfig() {
   if (!promessa) {
     promessa = (async () => {
+      const { data: sessao } = await supabase.auth.getSession();
+      const usuario = sessao.session?.user?.id;
+      if (!usuario) return { ...CARTAO_PADRAO, salvo: false };
       const dados = resolver(
-        await supabase.from('config_cartao').select('dia_fechamento, dia_vencimento').maybeSingle(),
+        await supabase
+          .from('config_cartao')
+          .select('dia_fechamento, dia_vencimento')
+          .eq('user_id', usuario)
+          .maybeSingle(),
       );
       return dados ? { ...dados, salvo: true } : { ...CARTAO_PADRAO, salvo: false };
     })().catch((erro) => {
@@ -26,6 +33,19 @@ export function obterConfig() {
     });
   }
   return promessa;
+}
+
+/** Visão geral: o cartão de cada pessoa, por id de usuário. */
+export async function listarConfigs() {
+  const linhas = resolver(
+    await supabase.from('config_cartao').select('user_id, dia_fechamento, dia_vencimento'),
+  );
+  return new Map(
+    (linhas ?? []).map((l) => [
+      l.user_id,
+      { dia_fechamento: l.dia_fechamento, dia_vencimento: l.dia_vencimento, salvo: true },
+    ]),
+  );
 }
 
 /**

@@ -14,10 +14,12 @@ const ITENS = [
 ];
 
 export default function Sidebar() {
-  const { sair, sessao } = useAuth();
+  const { sair, sessao, somenteGeral } = useAuth();
   const { pathname } = useLocation();
   const email = sessao?.user?.email ?? '';
-  const ativo = ITENS.findIndex((item) => pathname.startsWith(item.to));
+  // a visão geral só tem a aba Geral
+  const itens = somenteGeral ? ITENS.filter((item) => item.to === '/geral') : ITENS;
+  const ativo = itens.findIndex((item) => pathname.startsWith(item.to));
 
   return (
     <aside className="sidebar">
@@ -27,7 +29,7 @@ export default function Sidebar() {
 
       <nav className="sidebar__nav" aria-label="Principal" style={{ '--i': Math.max(ativo, 0) }}>
         <span className="sidebar__indicador" aria-hidden="true" data-oculto={ativo < 0} />
-        {ITENS.map(({ to, rotulo, icone: Icone }) => (
+        {itens.map(({ to, rotulo, icone: Icone }) => (
           <div className="sidebar__item" key={to}>
             <NavLink to={to} className="sidebar__link" aria-label={rotulo}>
               <Icone size={21} aria-hidden="true" />

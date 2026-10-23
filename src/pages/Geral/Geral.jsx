@@ -6,12 +6,15 @@ import StatCard from '../../components/StatCard/StatCard';
 import StatusBadge from '../../components/StatusBadge/StatusBadge';
 import EmptyState from '../../components/EmptyState/EmptyState';
 import ListaGastos from '../../components/ListaGastos/ListaGastos';
+import Abas from '../../components/Abas/Abas';
 import GraficoFluxo from '../../components/GraficoFluxo/GraficoFluxo';
 import Medidor from '../../components/Medidor/Medidor';
 import ValorAnimado from '../../components/ValorAnimado/ValorAnimado';
 import Modal from '../../components/Modal/Modal';
 import { useToast } from '../../components/Toast/Toast';
 import { useMes } from '../../contexts/MesContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { useUsuarios } from '../../hooks/useUsuarios';
 import { useGastos, useProximosPagamentos } from '../../hooks/useGastos';
 import { useEntradas } from '../../hooks/useEntradas';
 import { useCartao } from '../../contexts/CartaoContext';
@@ -70,9 +73,51 @@ export default function Geral() {
   const { mes } = useMes();
   const { cartao } = useCartao();
   const { avisar } = useToast();
-  const { gastos, carregando: carregandoGastos, erro: erroGastos } = useGastos(mes);
-  const { entradas, carregando: carregandoEntradas, erro: erroEntradas, recarregar } = useEntradas(mes);
-  const { proximos, erro: erroProximos } = useProximosPagamentos();
+  const { somenteGeral } = useAuth();
+  const { gastos: gastosTodos, carregando: carregandoGastos, erro: erroGastos } = useGastos(mes);
+  const {
+    entradas: entradasTodas,
+    carregando: carregandoEntradas,
+    erro: erroEntradas,
+    recarregar,
+  } = useEntradas(mes);
+  const { proximos: proximosTodos, erro: erroProximos } = useProximosPagamentos();
+  const { usuarios } = useUsuarios(somenteGeral);
+
+  // Visão geral: "Total" mostra todo mundo junto; escolher uma pessoa separa só os dados dela.
+  const [filtro, setFiltro] = useState('todos');
+  const gastos = useMemo(
+    () => (filtro === 'todos' ? gastosTodos : gastosTodos.filter((g) => g.user_id === filtro)),
+    [gastosTodos, filtro],
+  );
+  const entradas = useMemo(
+    () => (filtro === 'todos' ? entradasTodas : entradasTodas.filter((e) => e.user_id === filtro)),
+    [entradasTodas, filtro],
+  );
+  const proximos = useMemo(
+    () => (filtro === 'todos' ? proximosTodos : proximosTodos.filter((g) => g.user_id === filtro)),
+    [proximosTodos, filtro],
+  );
+
+  // nome de cada pessoa (e uma por pessoa, com os totais, para a tabela "Por pessoa")
+  const { nomes, porPessoa } = useMemo(() => {
+    const nomes = new Map(usuarios.map((u) => [u.user_id, u.nome]));
+    [...gastosTodos, ...entradasTodas].forEach((item) => {
+      if (!nomes.has(item.user_id)) nomes.set(item.user_id, `Pessoa ${nomes.size + 1}`);
+    });
+    const soma = (lista) => lista.reduce((total, item) => total + Number(item.valor), 0);
+    const linhas = [...nomes.entries()].map(([id, nome]) => {
+      const dele = gastosTodos.filter((g) => g.user_id === id);
+      const entrou = soma(entradasTodas.filter((e) => e.user_id === id));
+      const contas = soma(dele);
+      const pago = soma(dele.filter((g) => g.pago));
+      return { id, nome, entrou, contas, pago, aPagar: contas - pago, saldo: entrou - contas };
+    });
+    return { nomes, porPessoa: linhas };
+  }, [usuarios, gastosTodos, entradasTodas]);
+
+  const pessoas = somenteGeral && filtro === 'todos' ? nomes : null;
+  const pessoa = (id) => (pessoas?.get(id) ? ` · ${pessoas.get(id)}` : '');
 
   const [modalAberto, setModalAberto] = useState(false);
   const [descricao, setDescricao] = useState('');
@@ -200,7 +245,26 @@ export default function Geral() {
 
   return (
     <div className="geral">
-      <PageHeader titulo={`${saudacao()}!`} descricao="Tudo do seu mês, em detalhe." />
+      <PageHeader
+        titulo={`${saudacao()}!`}
+        descricao={
+          somenteGeral ? 'Visão geral de todas as pessoas, somente leitura.' : 'Tudo do seu mês, em detalhe.'
+        }
+      >
+        {somenteGeral && (
+          <div className="geral__filtro">
+            <Abas
+              rotulo="Ver por pessoa"
+              ativa={filtro}
+              onMudar={setFiltro}
+              abas={[
+                { id: 'todos', rotulo: 'Total' },
+                ...[...nomes.entries()].map(([id, nome]) => ({ id, rotulo: nome })),
+              ]}
+            />
+          </div>
+        )}
+      </PageHeader>
 
       {erro && <p className="aviso-erro geral__erro">Não foi possível carregar os dados: {erro}</p>}
 
@@ -326,6 +390,47 @@ export default function Geral() {
         />
       </section>
 
+      {somenteGeral && (
+        <section className="painel geral__pessoas">
+          <h2>Por pessoa</h2>
+          <p className="geral__sub">Cada pessoa separada e, no fim, o total de todas.</p>
+          <div className="geral__tabela-rolagem">
+            <table className="geral__tabela">
+              <thead>
+                <tr>
+                  <th scope="col">Pessoa</th>
+                  <th scope="col">Entrou</th>
+                  <th scope="col">Contas</th>
+                  <th scope="col">Pago</th>
+                  <th scope="col">A pagar</th>
+                  <th scope="col">Saldo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {porPessoa.map((p) => (
+                  <tr key={p.id}>
+                    <th scope="row">{p.nome}</th>
+                    <td className="numero">{moeda(p.entrou)}</td>
+                    <td className="numero">{moeda(p.contas)}</td>
+                    <td className="numero">{moeda(p.pago)}</td>
+                    <td className="numero">{moeda(p.aPagar)}</td>
+                    <td className={`numero ${p.saldo < 0 ? 'geral__negativo' : ''}`}>{moeda(p.saldo)}</td>
+                  </tr>
+                ))}
+                <tr className="geral__tabela-total">
+                  <th scope="row">Total</th>
+                  <td className="numero">{moeda(porPessoa.reduce((t, p) => t + p.entrou, 0))}</td>
+                  <td className="numero">{moeda(porPessoa.reduce((t, p) => t + p.contas, 0))}</td>
+                  <td className="numero">{moeda(porPessoa.reduce((t, p) => t + p.pago, 0))}</td>
+                  <td className="numero">{moeda(porPessoa.reduce((t, p) => t + p.aPagar, 0))}</td>
+                  <td className="numero">{moeda(porPessoa.reduce((t, p) => t + p.saldo, 0))}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
       <div className="geral__colunas">
         <section className="painel geral__resumo">
           <h2>Resumo do mês</h2>
@@ -396,6 +501,7 @@ export default function Geral() {
                     <strong>{g.nome}</strong>
                     <small>
                       {rotuloTipo(g)} · {dataCurta(g.data_pagamento)} · {textoPrazo(g.data_pagamento)}
+                      {pessoa(g.user_id)}
                     </small>
                   </div>
                   <StatusBadge status={statusDoGasto(g)} />
@@ -414,6 +520,7 @@ export default function Geral() {
           gastos={fixos.lista}
           vazio={fixos.vazio}
           vazioDescricao={fixos.vazioDescricao}
+          pessoas={pessoas}
           ocupado={carregandoGastos}
         />
         <ListaGastos
@@ -422,6 +529,7 @@ export default function Geral() {
           gastos={variaveis.lista}
           vazio={variaveis.vazio}
           vazioDescricao={variaveis.vazioDescricao}
+          pessoas={pessoas}
           ocupado={carregandoGastos}
         />
       </div>
@@ -433,6 +541,7 @@ export default function Geral() {
           gastos={parcelados.lista}
           vazio={parcelados.vazio}
           vazioDescricao={parcelados.vazioDescricao}
+          pessoas={pessoas}
           ocupado={carregandoGastos}
         />
 
@@ -442,19 +551,25 @@ export default function Geral() {
               <h2>Valores adicionados</h2>
               <p className="geral__sub">Dinheiro que entrou em {entradas.length === 1 ? '1 lançamento' : `${entradas.length} lançamentos`}</p>
             </div>
-            <button type="button" className="btn btn--secundario btn--pequeno" onClick={abrirModal}>
-              <Plus size={16} aria-hidden="true" />
-              Registrar entrada
-            </button>
+            {!somenteGeral && (
+              <button type="button" className="btn btn--secundario btn--pequeno" onClick={abrirModal}>
+                <Plus size={16} aria-hidden="true" />
+                Registrar entrada
+              </button>
+            )}
           </header>
           {entradas.length === 0 ? (
             <EmptyState
               titulo="Nenhuma entrada neste mês"
-              descricao="Registre salário, vendas ou qualquer dinheiro que entrou."
+              descricao={
+                somenteGeral ? 'Ninguém registrou entradas neste mês.' : 'Registre salário, vendas ou qualquer dinheiro que entrou.'
+              }
             >
-              <button type="button" className="btn btn--primario btn--pequeno" onClick={abrirModal}>
-                Registrar entrada
-              </button>
+              {!somenteGeral && (
+                <button type="button" className="btn btn--primario btn--pequeno" onClick={abrirModal}>
+                  Registrar entrada
+                </button>
+              )}
             </EmptyState>
           ) : (
             <ul>
@@ -462,19 +577,24 @@ export default function Geral() {
                 <li key={e.id} className="geral__item">
                   <div className="geral__item-info">
                     <strong>{e.descricao}</strong>
-                    <small>Recebido em {dataCurta(e.data_entrada)}</small>
+                    <small>
+                      Recebido em {dataCurta(e.data_entrada)}
+                      {pessoa(e.user_id)}
+                    </small>
                   </div>
                   <span className="numero geral__item-valor geral__item-valor--entrada">
                     {moeda(e.valor)}
                   </span>
-                  <button
-                    type="button"
-                    className="btn btn--perigo btn--icone"
-                    onClick={() => excluirEntrada(e)}
-                    aria-label={`Excluir entrada ${e.descricao}`}
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  {!somenteGeral && (
+                    <button
+                      type="button"
+                      className="btn btn--perigo btn--icone"
+                      onClick={() => excluirEntrada(e)}
+                      aria-label={`Excluir entrada ${e.descricao}`}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -489,6 +609,7 @@ export default function Geral() {
           gastos={credito.lista}
           vazio="Nenhuma compra no crédito neste mês"
           vazioDescricao="Ao cadastrar um gasto, escolha Crédito em Forma de pagamento."
+          pessoas={pessoas}
           ocupado={carregandoGastos}
           mostrarTipo
           mostrarForma={false}

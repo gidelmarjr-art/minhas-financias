@@ -6,8 +6,9 @@ import {
   mesAtual,
   vencimentoDaFatura,
 } from '../lib/format';
+import { ehSomenteLeitura } from '../lib/acesso';
 import { obterConfig } from './cartaoService';
-import { garantirFixosDoMes } from './fixosService';
+import { fixosVirtuaisDoMes, garantirFixosDoMes } from './fixosService';
 
 const TABELA = 'gastos';
 const CAMPOS = '*, fixo:gastos_fixos(id, dia_vencimento)';
@@ -20,7 +21,7 @@ function resolver({ data, error }) {
 export async function listarPorMes(mes) {
   await garantirFixosDoMes(mes);
   const { inicio, fim } = intervaloDoMes(mes);
-  return resolver(
+  const dados = resolver(
     await supabase
       .from(TABELA)
       .select(CAMPOS)
@@ -28,10 +29,32 @@ export async function listarPorMes(mes) {
       .lte('data_pagamento', fim)
       .order('data_pagamento', { ascending: true }),
   );
+  if (!ehSomenteLeitura()) return dados;
+
+  // Visão geral: soma os gastos fixos de quem ainda não abriu este mês (sem gravar nada).
+  const virtuais = await fixosVirtuaisDoMes(mes, dados);
+  return [...dados, ...virtuais].sort((a, b) => a.data_pagamento.localeCompare(b.data_pagamento));
 }
 
 /** Contas não pagas, das mais antigas (atrasadas) às mais distantes. */
 export async function listarProximos(limite = 6) {
+  if (ehSomenteLeitura()) {
+    const inicioDoMes = `${mesAtual()}-01`;
+    const atrasadas = resolver(
+      await supabase
+        .from(TABELA)
+        .select(CAMPOS)
+        .eq('pago', false)
+        .lt('data_pagamento', inicioDoMes)
+        .order('data_pagamento', { ascending: true })
+        .limit(200),
+    );
+    const meses = await Promise.all([mesAtual(), deslocarMes(mesAtual(), 1)].map(listarPorMes));
+    const porId = new Map([...atrasadas, ...meses.flat().filter((g) => !g.pago)].map((g) => [g.id, g]));
+    return [...porId.values()]
+      .sort((a, b) => a.data_pagamento.localeCompare(b.data_pagamento))
+      .slice(0, limite);
+  }
   await garantirFixosDoMes(mesAtual());
   await garantirFixosDoMes(deslocarMes(mesAtual(), 1));
   return resolver(

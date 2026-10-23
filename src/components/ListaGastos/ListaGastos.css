@@ -135,3 +135,8 @@
   background: transparent;
   color: var(--tinta-suave);
 }
+
+.lista-gastos__tag--pessoa {
+  background: var(--salvia-suave);
+  color: var(--tinta);
+}

@@ -319,3 +319,18 @@
     min-width: 0;
   }
 }
+
+/* ---------- Visão geral (somente leitura) ---------- */
+.geral__filtro .abas {
+  margin-bottom: 0;
+}
+.geral__pessoas {
+  margin-top: 16px;
+  padding: 22px;
+}
+.geral__pessoas h2 {
+  font-size: 18px;
+}
+.geral__pessoas .geral__tabela-rolagem {
+  margin-top: 8px;
+}

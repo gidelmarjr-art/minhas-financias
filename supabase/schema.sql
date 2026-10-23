@@ -1,7 +1,8 @@
 -- Minhas Finanças — schema completo (instalação nova).
 -- Cole tudo no SQL Editor do Supabase e clique em Run. Pode rodar mais de uma vez.
+-- Perfis de acesso (quem vê só a aba Geral): rode também migracao-perfis.sql depois deste arquivo.
 -- Se você já tinha rodado uma versão anterior, use as migrações, nesta ordem:
---   1) migracao-tipos-de-gasto.sql   2) migracao-forma-pagamento.sql   3) migracao-fatura-cartao.sql
+--   1) migracao-tipos-de-gasto.sql   2) migracao-forma-pagamento.sql   3) migracao-fatura-cartao.sql   4) migracao-gastos-passados.sql   5) migracao-perfis.sql
 
 -- 1) Gastos fixos: modelo que se repete todo mês até ser encerrado
 create table if not exists public.gastos_fixos (

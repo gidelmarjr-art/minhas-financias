@@ -5,7 +5,7 @@ import './ListaGastos.css';
 
 const soma = (lista) => lista.reduce((total, g) => total + Number(g.valor), 0);
 
-function Etiquetas({ gasto, mostrarTipo, mostrarForma }) {
+function Etiquetas({ gasto, mostrarTipo, mostrarForma, pessoa }) {
   let tipo = null;
   if (gasto.tipo === 'fixo') tipo = 'Todo mês';
   else if (gasto.tipo === 'parcelado') tipo = `Parcela ${gasto.parcela_numero}/${gasto.parcela_total}`;
@@ -13,6 +13,7 @@ function Etiquetas({ gasto, mostrarTipo, mostrarForma }) {
 
   return (
     <>
+      {pessoa && <span className="lista-gastos__tag lista-gastos__tag--pessoa">{pessoa}</span>}
       {tipo && <span className="lista-gastos__tag">{tipo}</span>}
       {mostrarForma && gasto.forma_pagamento === 'credito' && (
         <span className="lista-gastos__tag lista-gastos__tag--credito">Crédito</span>
@@ -70,6 +71,7 @@ export default function ListaGastos({
   renderAcoes,
   destaqueId,
   ocupado = false,
+  pessoas = null,
   mostrarTipo = false,
   mostrarForma = true,
 }) {
@@ -106,7 +108,12 @@ export default function ListaGastos({
               <div className="lista-gastos__info">
                 <span className="lista-gastos__nome">
                   <strong>{g.nome}</strong>
-                  <Etiquetas gasto={g} mostrarTipo={mostrarTipo} mostrarForma={mostrarForma} />
+                  <Etiquetas
+                    gasto={g}
+                    mostrarTipo={mostrarTipo}
+                    mostrarForma={mostrarForma}
+                    pessoa={pessoas?.get(g.user_id)}
+                  />
                 </span>
                 <Detalhe gasto={g} />
               </div>
