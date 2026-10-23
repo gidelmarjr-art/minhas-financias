@@ -38,7 +38,7 @@ export default function Login() {
         </span>
         <h1>Suas contas, mês a mês.</h1>
         <p>
-          Veja quanto entrou, quanto falta pagar e o que vence nos próximos dias — tudo num só lugar.
+          Veja quanto entrou, quanto falta pagar e o que vence nos próximos dias tudo num só lugar.
         </p>
       </section>
 
